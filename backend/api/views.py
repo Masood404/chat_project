@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import HttpResponse
 from django.urls import reverse
 from django.db.models import Q
 from rest_framework import generics

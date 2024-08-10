@@ -4,6 +4,9 @@ from django.core.exceptions import ValidationError
 
 # Create your models here.
 class User(AbstractUser):
+    class Meta: 
+        ordering = ("first_name", "last_name")
+
     first_name = models.CharField(max_length=150, blank=False, null=False)
     friends = models.ManyToManyField("self", symmetrical=True)
     sent_requests = models.ManyToManyField("self", symmetrical=False, related_name="recieved_requests")
