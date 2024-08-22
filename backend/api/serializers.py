@@ -16,7 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = "__all__"
+        fields = ["first_name", "last_name", "username", "email", "password", "confirmation", "friends"]
         extra_kwargs = {
             "username": { "validators": [MinLengthValidator(4)] },
             "password": { "write_only": True, "validators": [validate_password] },
