@@ -7,7 +7,7 @@ const useAuth = () => useContext(AuthContext);
 const AuthProvider = ({ children }) => {
     const refreshToken = localStorage.getItem('refreshToken');
 
-    const [isLogged, setIsLogged] = useState(false);
+    const [accessToken, setAccessToken] = useState(null);
 
     const login = async (formData) => {
         const { data } = await axiosInstance({
@@ -20,12 +20,13 @@ const AuthProvider = ({ children }) => {
 
         localStorage.setItem('refreshToken', data.refresh);
 
-        setIsLogged(true);
+        setAccessToken(data.access);
     };
 
     const logout = () => { 
         localStorage.removeItem('refreshToken'); 
-        setIsLogged(false);
+
+        setAccessToken(null);
     };  
 
     const refreshAccessToken = async () => {
@@ -40,16 +41,8 @@ const AuthProvider = ({ children }) => {
             });
     
             if (!data.access) throw data;
-            
-            axiosInstance.interceptors.request.use(
-                config => {
-                    config.headers.Authorization = `Bearer ${data.access}`;
-                    return config;
-                },
-                error => Promise.reject(error)
-            );
 
-            setIsLogged(true);
+            setAccessToken(data.access);
 
         } catch (error) {
             logout();
@@ -60,12 +53,29 @@ const AuthProvider = ({ children }) => {
 
     useEffect(() => { refreshAccessToken(); }, []);
 
+    useLayoutEffect(() => {
+        if (accessToken) {
+            const requestInterceptor = axiosInstance.interceptors.request.use(
+                config => {
+                    config.headers.Authorization = `Bearer ${accessToken}`;
+                    return config;
+                },
+                error => Promise.reject(error)
+            );
+    
+            return () => {
+                axiosInstance.interceptors.request.eject(requestInterceptor);
+            };
+        }
+
+    }, [accessToken]);
+
     const contextValue = useMemo(() => ({
-        isLogged,
+        accessToken,
         refreshToken,
         login,
         logout
-    }), [refreshToken, isLogged]);
+    }), [refreshToken, accessToken]);
 
     return (
         <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
