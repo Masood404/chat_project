@@ -1,0 +1,16 @@
+version: '3'
+
+services: 
+  backend:
+    build: ./backend/
+    container_name: chat_project_backend
+    ports:
+      - 8000:8000
+
+  frontend: 
+    build: ./frontend/
+    container_name: chat_project_frontend
+    ports: 
+      - 3000:3000
+    depends_on:
+      - backend
