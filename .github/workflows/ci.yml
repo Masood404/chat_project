@@ -15,11 +15,10 @@ jobs:
 
     steps: 
       - name: Checkout code
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
 
       - name: Build containers
         run: docker-compose up --build -d
       
-      - name: Run django tests
+      - name: Run Django tests
         run: docker exec chat_project_backend python manage.py test api
-
