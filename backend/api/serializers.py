@@ -1,7 +1,9 @@
 from django.core.validators import MinLengthValidator
 from django.contrib.auth.password_validation import validate_password
+from django.conf import settings
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .models import User
     
@@ -53,3 +55,24 @@ class PublicUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "first_name", "last_name"]
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    remember_me = serializers.BooleanField(required=False, default=False)
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        remember_me = attrs.get('remember_me', False)
+
+        refresh = self.get_token(self.user)
+
+        if remember_me:
+            refresh.set_exp(lifetime=settings.SIMPLE_JWT['REMEMBER_ME_REFRESH_TOKEN_LIFETIME'])
+
+        else:
+            refresh.set_exp(lifetime=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'])
+        
+        data['refresh'] = str(refresh)
+        data['access'] = str(refresh.access_token)
+
+        return data

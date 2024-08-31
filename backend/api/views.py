@@ -2,9 +2,10 @@ from django.shortcuts import HttpResponse
 from django.urls import reverse
 from django.db.models import Q
 from rest_framework import generics
+from rest_framework_simplejwt.views import TokenObtainPairView
 
-from .permissions import AllowAny, IsAuthenticated, ReadIsAuthenticated
-from .serializers import UserSerializer, PublicUserSerializer
+from .permissions import ReadIsAuthenticated
+from .serializers import UserSerializer, PublicUserSerializer, CustomTokenObtainPairSerializer
 from .models import User
 
 # Create your views here.
@@ -31,3 +32,6 @@ class UsersView(generics.ListCreateAPIView):
             )
 
         return User.objects.all()
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
