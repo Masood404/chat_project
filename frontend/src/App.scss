@@ -9,3 +9,15 @@ $custom-colors: (
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
 @import "~bootstrap/scss/bootstrap";
+
+@mixin checked-bg($color-name, $color-value) {
+    .checked-bg-#{$color-name} {
+      &:checked {
+        background-color: $color-value !important;
+      }
+    }
+}
+
+@each $color, $value in $theme-colors {
+    @include checked-bg($color, $value)
+}
