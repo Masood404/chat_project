@@ -1,23 +1,38 @@
 @import "~bootstrap/scss/functions";
+
+$primary: #127dff;
+
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/variables-dark";
 
 $custom-colors: (
-    "violet": #aa00ff,
-    "vivid-blue": #127dff
+  "violet": #aa00ff,
 );
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
 @import "~bootstrap/scss/bootstrap";
 
 @mixin checked-bg($color-name, $color-value) {
-    .checked-bg-#{$color-name} {
-      &:checked {
-        background-color: $color-value !important;
-      }
+  .checked-bg-#{$color-name} {
+    &:checked {
+      background-color: $color-value !important;
     }
+  }
 }
 
 @each $color, $value in $theme-colors {
-    @include checked-bg($color, $value)
+  @include checked-bg($color, $value);
+}
+
+a {
+  color: var(--bs-dark);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+input.form-control {
+  width: 286px;
 }
