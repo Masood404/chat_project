@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 
 import useForm from '../hooks/useForm';
@@ -7,17 +7,19 @@ import { useAuth } from '../hooks/AuthProvider';
 
 import MessengerLogo from '../images/messenger-logo.svg';
 
+import NonFieldErrors from '../components/NonFieldErrors';
+import Input from '../components/Input';
+import Button from '../components/Button';
+
 const Login = () => {
     const { login, accessToken } = useAuth();
     const navigate = useNavigate();
-    
-    const { handleSubmit, getInputProps, formData } = useForm({
+
+    const { formData, formErrors, handleSubmit, getInputProps } = useForm({
         username: '',
         password: '',
         remember_me: false
-    }, async () => {
-        await login(formData);
-    });
+    }, async () => { await login(formData); });
 
     useEffect(() => {
         if (accessToken) {
@@ -28,45 +30,30 @@ const Login = () => {
     return (
         <div className="h-100 d-flex flex-column">
             <div className="text-center d-flex justify-content-center align-items-center flex-column flex-grow-1">
-                <div className="mb-5">
+                <div className="mb-4">
                     <img src={MessengerLogo} id="messenger-logo" alt="Messenger Logo" />
                 </div>
 
-                <h2 className="fw-normal mb-5">Messenger Clone Login</h2>
+                <h1 className="fw-light mb-4">Messenger Clone Login</h1>
 
                 <Form className="w-100" onSubmit={handleSubmit}>
-                    <div className="mb-3">
-                        <Form.Control 
-                            {...getInputProps('username', 'text')}
-                            placeholder="Username" 
-                            className="mx-auto py-2"
-                            style={{
-                                width: 286,
-                            }}
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <Form.Control 
-                            {...getInputProps('password', 'password')}
-                            placeholder="Password" 
-                            className="mx-auto py-2"
-                            style={{
-                                width: 286,
-                            }}
-                        />
-                    </div>
-                    <Button 
-                        type="submit"
-                        variant="vivid-blue" 
-                        className="rounded-pill py-2 px-3 text-white mb-5"
-                    >
-                        Continue
-                    </Button>
+
+                    <NonFieldErrors non_field_errors={formErrors.non_field_errors} />
+
+                    <Input
+                        {...getInputProps('username', 'text')}
+                    />
+
+                    <Input
+                        {...getInputProps('password', 'password')}
+                    />
+
+                    <Button type="submit">Continue</Button>
+
                     <div className="d-flex justify-content-center">
-                        <Form.Check> 
-                            <Form.Check.Input 
+                        <Form.Check>
+                            <Form.Check.Input
                                 {...getInputProps('remember_me', 'checkbox')}
-                                className="checked-bg-vivid-blue"
                             />
                             <Form.Check.Label className="text-secondary fw-light">
                                 Keep me signed in
@@ -75,19 +62,19 @@ const Login = () => {
                     </div>
                 </Form>
             </div>
-            <footer className="row text-center justify-content-center text-nowrap gap-2 fw-light">
+            <footer className="row text-center justify-content-center text-nowrap gap-2">
                 <div className="col-6 col-sm-4 col-lg-2">
-                    <Link to="/register" className="text-decoration-none link-dark">
+                    <Link to="/register">
                         Register
                     </Link>
                 </div>
                 <div className="col-6 col-sm-4 col-lg-2">
-                    <Link to="/reset-password" className="text-decoration-none link-dark">
+                    <Link to="/reset-password">
                         Forgotten Password
                     </Link>
                 </div>
                 <div className="col-6 col-sm-4 col-lg-2 ">
-                    <a href="https://messenger.com" className="text-decoration-none link-dark">
+                    <a href="https://messenger.com">
                         Messenger
                     </a>
                 </div>
