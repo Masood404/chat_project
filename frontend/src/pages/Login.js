@@ -34,7 +34,7 @@ const Login = () => {
                     <img src={MessengerLogo} id="messenger-logo" alt="Messenger Logo" />
                 </div>
 
-                <h1 className="fw-light mb-4">Messenger Clone Login</h1>
+                <h1 className="fw-normal mb-4">Messenger Clone Login</h1>
 
                 <Form className="w-100" onSubmit={handleSubmit}>
 

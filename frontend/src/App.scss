@@ -31,8 +31,16 @@ a {
   &:hover {
     text-decoration: underline;
   }
+  &[role="button"]:hover {
+    text-decoration: none;
+  }
 }
 
 input.form-control {
   width: 286px;
+}
+
+.App {
+  position: fixed;
+  font-family: Helvetica Neue, Segoe UI, Helvetica, Arial, sans-serif;
 }
