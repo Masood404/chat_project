@@ -2,7 +2,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import GenericLoader from "../components/GenericLoader";
 import { useAuth } from "../hooks/AuthProvider";
 
-const ProtectedRoute = () => {
+const PrivateRoute = () => {
     const { accessToken, isLoaded } = useAuth();
 
     if (!isLoaded) return <GenericLoader>Checking Authentication...</GenericLoader>;
@@ -11,4 +11,4 @@ const ProtectedRoute = () => {
     return <Outlet />;
 };
 
-export default ProtectedRoute;
+export default PrivateRoute;
