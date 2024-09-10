@@ -9,6 +9,8 @@ const AuthProvider = ({ children }) => {
 
     const [accessToken, setAccessToken] = useState(null);
 
+    const [isLoaded, setIsLoaded] = useState(false);
+
     const login = async (formData) => {
         const { data } = await axiosInstance({
             method: 'POST',
@@ -23,14 +25,14 @@ const AuthProvider = ({ children }) => {
         setAccessToken(data.access);
     };
 
-    const logout = () => { 
-        localStorage.removeItem('refreshToken'); 
+    const logout = () => {
+        localStorage.removeItem('refreshToken');
 
         setAccessToken(null);
-    };  
+    };
 
     const refreshAccessToken = async () => {
-        
+
         try {
             if (!refreshToken) throw 'Refresh token not found.';
 
@@ -39,7 +41,7 @@ const AuthProvider = ({ children }) => {
                 url: '/token/refresh/',
                 data: { refresh: refreshToken }
             });
-    
+
             if (!data.access) throw data;
 
             setAccessToken(data.access);
@@ -51,7 +53,10 @@ const AuthProvider = ({ children }) => {
 
     };
 
-    useEffect(() => { refreshAccessToken(); }, []);
+    useEffect(() => {
+        refreshAccessToken()
+            .finally(() => { setIsLoaded(true); });
+    }, []);
 
     useLayoutEffect(() => {
         if (accessToken) {
@@ -62,7 +67,7 @@ const AuthProvider = ({ children }) => {
                 },
                 error => Promise.reject(error)
             );
-    
+
             return () => {
                 axiosInstance.interceptors.request.eject(requestInterceptor);
             };
@@ -71,11 +76,12 @@ const AuthProvider = ({ children }) => {
     }, [accessToken]);
 
     const contextValue = useMemo(() => ({
+        isLoaded,
         accessToken,
         refreshToken,
         login,
         logout
-    }), [refreshToken, accessToken]);
+    }), [isLoaded, accessToken, refreshToken]);
 
     return (
         <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>

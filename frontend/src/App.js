@@ -1,22 +1,27 @@
 import { Routes, Route } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 
-import Login from './pages/Login';
-
 import './App.scss';
 
+import Login from './pages/Login';
+import Home from './pages/Home';
+import PageNotFound from './pages/PageNotFound';
+import ProtectedRoute from './routing/ProtectedRoute';
+
 function App() {
-  return (
-    <div className="App d-flex flex-column h-100 w-100" style={{
-      position: 'fixed'
-    }}>
-      <Container className="py-2 my-2 h-100">
-        <Routes>
-          <Route path="/login" element={<Login />} />
-        </Routes>
-      </Container>
-    </div>
-  );
+	return (
+		<div className="App">
+			<Container className="py-2 my-2 h-100">
+				<Routes>
+					<Route element={<ProtectedRoute />}>
+						{["/", "/home"].map(path => <Route exact path={path} element={<Home />} />)}
+					</Route>
+					<Route exact path="/login" element={<Login />} />
+					<Route path="*" element={<PageNotFound />} />
+				</Routes>
+			</Container>
+		</div>
+	);
 }
 
 export default App;

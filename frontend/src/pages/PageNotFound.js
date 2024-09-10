@@ -15,7 +15,7 @@ const PageNotFound = () => {
             <div className="fs-1 mb-2 fw-medium">This Page isn't available</div>
             <div className="fs-5 mb-5">The link that you followed may be broken or the Page may have been removed.</div>
             <div>
-                <Button as={Link} to="/">Return messenger clone</Button>
+                <Button as={Link} to="/">Return to Home</Button>
             </div>
         </div>
     );
