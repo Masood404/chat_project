@@ -15,7 +15,7 @@ const Login = () => {
     const { login, accessToken } = useAuth();
     const navigate = useNavigate();
 
-    const { formData, formErrors, handleSubmit, getInputProps } = useForm({
+    const { formData, formErrors, isSubmitting, handleSubmit, getInputProps } = useForm({
         username: '',
         password: '',
         remember_me: false
@@ -48,7 +48,13 @@ const Login = () => {
                         {...getInputProps('password', 'password')}
                     />
 
-                    <Button type="submit">Continue</Button>
+                    <Button
+                        type="submit"
+                        isSubmitting={isSubmitting}
+                        submittingText="Continuing..."
+                    >
+                        Continue
+                    </Button>
 
                     <div className="d-flex justify-content-center">
                         <Form.Check>
@@ -62,18 +68,18 @@ const Login = () => {
                     </div>
                 </Form>
             </div>
-            <footer className="row text-center justify-content-center text-nowrap gap-2">
-                <div className="col-6 col-sm-4 col-lg-2">
+            <footer className="row text-center justify-content-center text-nowrap g-2 py-2">
+                <div className="col-6 col-sm-4 col-md-2">
                     <Link to="/register">
                         Register
                     </Link>
                 </div>
-                <div className="col-6 col-sm-4 col-lg-2">
+                <div className="col-6 col-sm-4 col-md-2">
                     <Link to="/reset-password">
                         Forgotten Password
                     </Link>
                 </div>
-                <div className="col-6 col-sm-4 col-lg-2 ">
+                <div className="col-6 col-sm-4 col-md-2 ">
                     <a href="https://messenger.com">
                         Messenger
                     </a>
