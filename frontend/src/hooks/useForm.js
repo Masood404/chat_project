@@ -10,6 +10,8 @@ const useForm = (initial, onSubmit) => {
         }, {})
     });
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const handleChange = ({ target: { type, name, value, checked } }) => {
         setFormData(prev => ({
             ...prev,
@@ -19,6 +21,7 @@ const useForm = (initial, onSubmit) => {
 
     const handleSubmit = async e => {
         e.preventDefault();
+        setIsSubmitting(true);
         try {
             await onSubmit?.(e);
         } catch (error) {
@@ -35,7 +38,7 @@ const useForm = (initial, onSubmit) => {
             else {
                 console.error(error);
             }
-        }
+        } finally { setIsSubmitting(false); }
     };
 
     const getInputProps = (name, type = "text") => {
@@ -54,7 +57,7 @@ const useForm = (initial, onSubmit) => {
         return { ...inputProps, value: formData[name] || "" };
     };
 
-    return { formData, formErrors, handleChange, handleSubmit, getInputProps };
+    return { formData, formErrors, isSubmitting, handleChange, handleSubmit, getInputProps };
 };
 
 export default useForm;
