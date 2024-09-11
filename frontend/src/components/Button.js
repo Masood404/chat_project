@@ -1,15 +1,19 @@
 import { Button as BsButton } from "react-bootstrap";
 
-const Button = ({ className = "", children, ...props }) => {
+import GenericLoader from "./GenericLoader";
+
+const Button = ({ submittingText = "", isSubmitting = false, className = "", children, ...props }) => {
     return (
         <BsButton
             className={`fw-medium rounded-pill text-white mb-5 ${className}`}
             style={{
-                padding: "15px 30px"
+                padding: "12px 24px"
             }}
             {...props}
         >
-            {children}
+            {isSubmitting ? (
+                <GenericLoader size="sm" >{submittingText}</GenericLoader>
+            ) : children}
         </BsButton>
     );
 };
