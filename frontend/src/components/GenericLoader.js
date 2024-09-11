@@ -1,10 +1,13 @@
 import { Spinner } from "react-bootstrap";
 
-const GenericLoader = ({ children }) => {
+const GenericLoader = ({ children, ...props }) => {
     return (
-        <Spinner variant="grow" role="status">
-            <span className="visually-hidden">{children}</span>
-        </Spinner>
+        <div className="d-flex align-items-center gap-2">
+            <Spinner animation="grow" role="status" className="d-inline-block" {...props} />
+            {children && (
+                <div className="d-inline-block">{children}</div>
+            )}
+        </div>
     );
 };
 
