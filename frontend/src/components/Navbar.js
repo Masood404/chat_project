@@ -19,6 +19,9 @@ const Navbar = () => {
                         <Nav.Item className="mx-md-3">
                             <Nav.Link as={Link} to="/download-app">Download app</Nav.Link>
                         </Nav.Item>
+                        <Nav.Item className="mx-md-3">
+                            <Nav.Link as={Link} to="/login">Login</Nav.Link>
+                        </Nav.Item>
                     </Nav>
                 </BsNavbar.Collapse>
             </Container>
