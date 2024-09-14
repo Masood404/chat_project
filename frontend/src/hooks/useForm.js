@@ -42,9 +42,15 @@ const useForm = (initial, onSubmit) => {
     };
 
     const getInputProps = (name, type = "text") => {
+        // Convert all underscores to empty space
+        let placeholder = name.replace(/_/g, ' ');
+
+        // Capitalize the first letter
+        placeholder = placeholder[0].toUpperCase() + placeholder.substring(1)
+
         const inputProps = {
             name,
-            placeholder: name[0].toUpperCase() + name.substring(1),
+            placeholder,
             type,
             errors: formErrors[name],
             onChange: handleChange,
