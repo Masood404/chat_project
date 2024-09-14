@@ -1,10 +1,20 @@
+import classNames from 'classnames';
 import { FormControl } from 'react-bootstrap';
 
-const Input = ({ className = "", containerClass = "", errors = [], ...props }) => {
+const variantClassMap = {
+    "primary": "",
+    "secondary": "bg-secondary-subtle border-0 rounded-3"
+};
+
+const Input = ({ customVariant = "primary", className = "", containerClass = "", errors = [], ...props }) => {
     return (
         <div className={`mb-3 ${containerClass}`}>
             <FormControl
-                className={`mx-auto py-2 ${className}`}
+                className={classNames(
+                    'py-2',
+                    variantClassMap[customVariant],
+                    className
+                )}
                 {...props}
             />
             {errors.length > 0 && (
