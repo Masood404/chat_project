@@ -6,7 +6,8 @@ $primary: #127dff;
 @import "~bootstrap/scss/variables-dark";
 
 $custom-colors: (
-  "violet": #aa00ff,
+  "violet": #a033ff,
+  "pink": #ff5c87,
 );
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
@@ -42,4 +43,68 @@ input.form-control {
 
 .App {
   font-family: Helvetica Neue, Segoe UI, Helvetica, Arial, sans-serif;
+}
+
+.navbar-light {
+  background-color: var(--bs-body-bg);
+}
+
+.nav-link {
+  & {
+    position: relative;
+    color: var(--bs-dark);
+    font-weight: 600;
+  }
+
+  &::after {
+    content: "";
+    background-color: var(--bs-primary);
+    border-radius: 1.5px;
+    bottom: 4px;
+    height: 3px;
+    left: 0;
+    position: absolute;
+
+    width: 0%;
+    visibility: hidden;
+
+    transition-duration: 0.2s;
+    transition-timing-function: ease;
+    transition-property: width, visibility;
+  }
+
+  &:hover {
+    & {
+      text-decoration: none;
+    }
+
+    &::after {
+      width: 100%;
+      visibility: visible;
+    }
+  }
+}
+
+.navbar-brand {
+  img {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.register-heading {
+  font-size: 90px;
+  letter-spacing: -4px;
+  line-height: 85px;
+}
+
+.theme-gradient-horizontal {
+  color: transparent;
+  background-clip: text;
+  background-image: linear-gradient(
+    90deg,
+    var(--bs-primary) -5%,
+    var(--bs-violet) 20%,
+    var(--bs-pink) 60%
+  );
 }
