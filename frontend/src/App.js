@@ -13,7 +13,6 @@ import PublicRoute from './routing/PublicRoute';
 function App() {
 	return (
 		<div className="App">
-			<Container className="py-2 my-2 h-100">
 				<Routes>
 					<Route element={<PrivateRoute />}>
 						{["/", "/home"].map((path, i) => <Route key={i} exact path={path} element={<Home />} />)}
@@ -23,7 +22,6 @@ function App() {
 					</Route>
 					<Route path="*" element={<PageNotFound />} />
 				</Routes>
-			</Container>
 		</div>
 	);
 }
