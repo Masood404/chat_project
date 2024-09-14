@@ -41,10 +41,12 @@ const Login = () => {
                     <NonFieldErrors non_field_errors={formErrors.non_field_errors} />
 
                     <Input
+                        className="mx-auto"
                         {...getInputProps('username', 'text')}
                     />
 
                     <Input
+                        className="mx-auto mb-2"
                         {...getInputProps('password', 'password')}
                     />
 
