@@ -1,6 +1,10 @@
+import Navbar from "../components/Navbar";
+
 const Home = () => {
     return (
-        <div>This is dummy home</div>
+        <div>
+            This is home
+        </div>
     );
 };
 
