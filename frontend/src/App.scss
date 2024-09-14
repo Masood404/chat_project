@@ -11,6 +11,12 @@ $custom-colors: (
 );
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
+$custom-font-sizes: (
+  0: 90px,
+);
+
+$font-sizes: map-merge($font-sizes, $custom-font-sizes);
+
 @import "~bootstrap/scss/bootstrap";
 
 @mixin checked-bg($color-name, $color-value) {
@@ -23,6 +29,12 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
 
 @each $color, $value in $theme-colors {
   @include checked-bg($color, $value);
+}
+
+@for $i from 1 through 10 {
+  .ls-#{$i} {
+    letter-spacing: $i * 5 - 15px;
+  }
 }
 
 a {
@@ -90,12 +102,6 @@ input.form-control {
     width: 40px;
     height: 40px;
   }
-}
-
-.register-heading {
-  font-size: 90px;
-  letter-spacing: -4px;
-  line-height: 85px;
 }
 
 .theme-gradient-horizontal {
