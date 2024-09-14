@@ -6,7 +6,7 @@ import Button from '../components/Button';
 
 const PageNotFound = () => {
     return (
-        <div className="h-100 d-flex justify-content-center align-items-center flex-column text-center">
+        <div className="vh-100 d-flex justify-content-center align-items-center flex-column text-center">
             <div className="mb-5">
                 <img src={MessengerLogo} id="messenger-logo" alt="Messenger Logo" style={{
                     width: 120
