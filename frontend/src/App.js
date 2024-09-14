@@ -17,8 +17,8 @@ function App() {
 	return (
 		<div className="App">
 			<Routes>
+				{["/", "/home"].map((path, i) => <Route key={i} exact path={path} element={<Home />} />)}
 				<Route element={<WithNavbar />}>
-					{["/", "/home"].map((path, i) => <Route key={i} exact path={path} element={<Home />} />)}
 					<Route exact path="/features" element={<Features />} />
 					<Route exact path="/download-app" element={<DownloadApp />} />
 				</Route>
