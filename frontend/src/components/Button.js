@@ -10,7 +10,6 @@ const Button = ({ submittingText = "", isSubmitting = false, className = "", chi
                 'fw-medium',
                 'rounded-pill',
                 'text-white',
-                'mb-5',
                 className
             )}
             style={{

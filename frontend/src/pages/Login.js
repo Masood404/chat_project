@@ -54,6 +54,7 @@ const Login = () => {
                         type="submit"
                         isSubmitting={isSubmitting}
                         submittingText="Continuing..."
+                        className="mb-5"
                     >
                         Continue
                     </Button>
