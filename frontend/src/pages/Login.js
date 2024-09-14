@@ -82,9 +82,9 @@ const Login = () => {
                         </Link>
                     </div>
                     <div className="col-6 col-sm-4 col-md-2 ">
-                        <a href="https://messenger.com">
+                        <Link to="/">
                             Messenger
-                        </a>
+                        </Link>
                     </div>
                 </footer>
             </Container>
