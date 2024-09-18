@@ -4,9 +4,11 @@ import Navbar from "../components/Navbar";
 const WithNavbar = ({ isRoute = true, children }) => {
     return (
         <>
-            <Navbar />
-            <div className="px-4 py-5">
-                {isRoute ? <Outlet /> : children}
+            <div className="px-4 px-xxl-10">
+                <Navbar />
+                <div className="py-5">
+                    {isRoute ? <Outlet /> : children}
+                </div>
             </div>
         </>
     );

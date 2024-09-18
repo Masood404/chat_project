@@ -5,7 +5,7 @@ import MessengerLogo from "../images/messenger-logo.svg";
 
 const Navbar = () => {
     return (
-        <BsNavbar expand="md" className="p-3 sticky-top">
+        <BsNavbar expand="md" className="py-4 sticky-top">
             <Container fluid={true}>
                 <BsNavbar.Brand>
                     <Link to="/"><img src={MessengerLogo} alt="Messenger Navbar Brand" /></Link>

@@ -3,7 +3,7 @@ import { FormControl } from 'react-bootstrap';
 
 const variantClassMap = {
     "primary": "",
-    "secondary": "bg-secondary-subtle border-0 rounded-3"
+    "secondary": "bg-light-subtle border-0 rounded-3"
 };
 
 const Input = ({ customVariant = "primary", className = "", containerClass = "", errors = [], ...props }) => {

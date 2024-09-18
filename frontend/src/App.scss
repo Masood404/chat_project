@@ -12,10 +12,24 @@ $custom-colors: (
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
 $custom-font-sizes: (
-  0: 90px,
+  0: 85px,
 );
 
 $font-sizes: map-merge($font-sizes, $custom-font-sizes);
+
+$custom-spacers: (
+  6: $spacer * 4,
+  7: $spacer * 5,
+  8: $spacer * 6,
+  9: $spacer * 7,
+  10: $spacer * 8,
+);
+
+$spacers: map-merge($spacers, $custom-spacers);
+
+$light-bg-subtle: mix($gray-200, $white);
+
+$input-placeholder-color: var(secondary-text-emphasis);
 
 @import "~bootstrap/scss/bootstrap";
 
