@@ -11,16 +11,19 @@ import MicrosoftStore from "../images/microsoft-store.png";
 import WithNavbar from "../routing/WithNavbar";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import NonFieldErrors from "../components/NonFieldErrors";
 
 const PublicHome = ({ auth }) => {
-    const { formData, formErrors, isSubmitting, handleSubmit, getInputProps } = useForm({
+    const { register } = auth;
+
+    const { formErrors, isSubmitting, handleSubmit, getInputProps } = useForm({
         first_name: '',
         last_name: '',
         username: '',
         email_address: '',
         password: '',
         confirmation: ''
-    }, async () => { console.log("here") });
+    }, register);
 
     return (
         <div className="row g-3">
@@ -36,7 +39,9 @@ const PublicHome = ({ auth }) => {
                     <br />
                     favourite people.
                 </div>
-                <Form className="mb-4">
+                <Form className="mb-4" onSubmit={handleSubmit}>
+                    <NonFieldErrors non_field_errors={formErrors.non_field_errors} />
+
                     <Input
                         customVariant="secondary"
                         {...getInputProps('first_name', 'text')}
@@ -116,7 +121,7 @@ const Home = () => {
 
     return auth.accessToken ? <PrivateHome auth={auth} /> : (
         <WithNavbar isRoute={false}>
-            <PublicHome />
+            <PublicHome auth={auth} />
         </WithNavbar>
     );
 };

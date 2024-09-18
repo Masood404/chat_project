@@ -23,7 +23,7 @@ const useForm = (initial, onSubmit) => {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            await onSubmit?.(e);
+            await onSubmit?.(formData, e);
         } catch (error) {
             const data = error.response?.data;
 

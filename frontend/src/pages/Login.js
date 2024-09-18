@@ -15,11 +15,11 @@ const Login = () => {
     const { login, accessToken } = useAuth();
     const navigate = useNavigate();
 
-    const { formData, formErrors, isSubmitting, handleSubmit, getInputProps } = useForm({
+    const { formErrors, isSubmitting, handleSubmit, getInputProps } = useForm({
         username: '',
         password: '',
         remember_me: false
-    }, async () => { await login(formData); });
+    }, login);
 
     useEffect(() => {
         if (accessToken) {

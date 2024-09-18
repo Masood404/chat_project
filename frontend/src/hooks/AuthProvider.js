@@ -53,6 +53,14 @@ const AuthProvider = ({ children }) => {
 
     };
 
+    const register = async (formData) => {
+        await axiosInstance({
+            method: 'POST',
+            url: '/users/',
+            data: formData
+        });
+    };
+
     useEffect(() => {
         refreshAccessToken()
             .finally(() => { setIsLoaded(true); });
@@ -80,7 +88,8 @@ const AuthProvider = ({ children }) => {
         accessToken,
         refreshToken,
         login,
-        logout
+        logout,
+        register
     }), [isLoaded, accessToken, refreshToken]);
 
     return (
