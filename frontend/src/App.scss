@@ -50,6 +50,9 @@ $utilities: map-merge(
               (
                 90: 90%,
                 110: 100%,
+                120: 120%,
+                130: 130%,
+                140: 140%,
                 150: 150%,
               )
             ),
@@ -154,6 +157,10 @@ input.form-control {
     width: 40px;
     height: 40px;
   }
+}
+
+.fs-0 {
+  padding-bottom: 16px;
 }
 
 .theme-gradient-horizontal {

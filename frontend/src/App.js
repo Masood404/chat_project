@@ -7,7 +7,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import PageNotFound from "./pages/PageNotFound";
 import Features from "./pages/Features";
-import DownloadApp from "./pages/DownloadApp";
+import DesktopApp from "./pages/DesktopApp";
 
 import PrivateRoute from "./routing/PrivateRoute";
 import PublicRoute from "./routing/PublicRoute";
@@ -20,7 +20,7 @@ function App() {
 				{["/", "/home"].map((path, i) => <Route key={i} exact path={path} element={<Home />} />)}
 				<Route element={<WithNavbar />}>
 					<Route exact path="/features" element={<Features />} />
-					<Route exact path="/download-app" element={<DownloadApp />} />
+					<Route exact path="/desktop" element={<DesktopApp />} />
 				</Route>
 
 				<Route element={<PublicRoute />}>

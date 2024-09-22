@@ -17,7 +17,7 @@ const Navbar = () => {
                             <Nav.Link as={Link} to="/features">Features</Nav.Link>
                         </Nav.Item>
                         <Nav.Item className="mx-md-3">
-                            <Nav.Link as={Link} to="/download-app">Download app</Nav.Link>
+                            <Nav.Link as={Link} to="/desktop">Desktop App</Nav.Link>
                         </Nav.Item>
                         <Nav.Item className="mx-md-3">
                             <Nav.Link as={Link} to="/login">Login</Nav.Link>
