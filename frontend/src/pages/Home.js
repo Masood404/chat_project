@@ -26,7 +26,7 @@ const PublicHome = ({ auth }) => {
     }, register);
 
     return (
-        <div className="row g-3">
+        <div className="row g-3 px-4 px-xxl-10">
             <div className="col-12 col-lg-6 text-center text-lg-start d-flex flex-column align-items-center align-items-lg-start">
                 <h1 className="ls-2 fs-0 lh-1 theme-gradient-horizontal mb-5">
                     Hang out
@@ -96,11 +96,8 @@ const PublicHome = ({ auth }) => {
                     </a>
                 </div>
             </div>
-            <div className="col-12 col-lg-6 text-center text-lg-end d-flex align-items-center">
-                <img src={MessengerRegister} alt="Messenger Register Image" style={{
-                    width: '90%',
-                    objectFit: 'contain'
-                }} />
+            <div className="col-12 col-lg-6 d-flex align-items-center justify-content-lg-end justify-content-center">
+                <img className="w-90 object-fit-contain" src={MessengerRegister} alt="Messenger Register Image" />
             </div>
         </div>
     );
