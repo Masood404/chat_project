@@ -8,11 +8,13 @@ $primary: #127dff;
 $custom-colors: (
   "violet": #a033ff,
   "pink": #ff5c87,
+  "lavender-mist": #fafaff,
 );
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
 $custom-font-sizes: (
   0: 85px,
+  c1: 70px,
 );
 
 $font-sizes: map-merge($font-sizes, $custom-font-sizes);
@@ -30,6 +32,31 @@ $spacers: map-merge($spacers, $custom-spacers);
 $light-bg-subtle: mix($gray-200, $white);
 
 $input-placeholder-color: var(secondary-text-emphasis);
+
+@import "~bootstrap/scss/maps";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/utilities";
+
+$utilities: map-merge(
+  $utilities,
+  (
+    "width":
+      map-merge(
+        map-get($utilities, "width"),
+        (
+          values:
+            map-merge(
+              map-get(map-get($utilities, "width"), "values"),
+              (
+                90: 90%,
+                110: 100%,
+                150: 150%,
+              )
+            ),
+        )
+      ),
+  )
+);
 
 @import "~bootstrap/scss/bootstrap";
 
@@ -51,6 +78,16 @@ $input-placeholder-color: var(secondary-text-emphasis);
   }
 }
 
+@each $breakpoint, $breakpoint-value in $grid-breakpoints {
+  @media (min-width: #{$breakpoint-value}) {
+    @each $width, $value in map-get(map-get($utilities, "width"), "values") {
+      .w-#{$breakpoint}-#{$width} {
+        width: #{$value};
+      }
+    }
+  }
+}
+
 a {
   color: var(--bs-dark);
   text-decoration: none;
@@ -69,6 +106,7 @@ input.form-control {
 
 .App {
   font-family: Helvetica Neue, Segoe UI, Helvetica, Arial, sans-serif;
+  overflow-x: clip;
 }
 
 .navbar-light {
