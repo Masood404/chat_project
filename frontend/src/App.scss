@@ -19,15 +19,11 @@ $custom-font-sizes: (
 
 $font-sizes: map-merge($font-sizes, $custom-font-sizes);
 
-$custom-spacers: (
-  6: $spacer * 4,
-  7: $spacer * 5,
-  8: $spacer * 6,
-  9: $spacer * 7,
-  10: $spacer * 8,
-  11: $spacer * 9,
-  12: $spacer * 10,
-);
+$custom-spacers: ();
+
+@for $i from 6 through 20 {
+  $custom-spacers: map-merge($custom-spacers, ($i: $spacer * ($i - 2)));
+}
 
 $spacers: map-merge($spacers, $custom-spacers);
 

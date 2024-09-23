@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-import { Container } from "react-bootstrap";
 
 import "./App.scss";
 
@@ -8,6 +7,7 @@ import Login from "./pages/Login";
 import PageNotFound from "./pages/PageNotFound";
 import Features from "./pages/Features";
 import DesktopApp from "./pages/DesktopApp";
+import StartDownload from "./pages/StartDownload";
 
 import PrivateRoute from "./routing/PrivateRoute";
 import PublicRoute from "./routing/PublicRoute";
@@ -26,6 +26,7 @@ function App() {
 				<Route element={<PublicRoute />}>
 					<Route exact path="/login" element={<Login />} />
 				</Route>
+				<Route exact path="/desktop/start-download" element={<StartDownload />} />
 				<Route path="*" element={<PageNotFound />} />
 			</Routes>
 		</div>
