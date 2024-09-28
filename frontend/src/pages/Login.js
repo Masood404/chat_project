@@ -74,12 +74,12 @@ const Login = () => {
 
             <Container fluid>
                 <footer className="row text-center justify-content-center text-nowrap g-2 py-2">
-                    <div className="col-6 col-sm-4 col-md-2">
+                    <div className="col-6 col-sm-4 col-md-3">
                         <Link to="/reset-password">
                             Forgotten Password
                         </Link>
                     </div>
-                    <div className="col-6 col-sm-4 col-md-2 ">
+                    <div className="col-6 col-sm-4 col-md-3">
                         <Link to="/">
                             Messenger
                         </Link>
