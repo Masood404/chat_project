@@ -5,7 +5,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from .models import User
+from .models import User, Chat
     
 class BaseUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -76,3 +76,43 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['access'] = str(refresh.access_token)
 
         return data
+    
+class ChatSerializer(serializers.ModelSerializer):
+    users = serializers.SerializerMethodField()  # For read operation
+    user_ids = serializers.ListField(  # For write operation
+        write_only=True,
+        child=serializers.IntegerField()
+    )
+
+    class Meta:
+        model = Chat
+        fields = ['id', 'name', 'users', 'user_ids']  # `users` is for read, `user_ids` is for write
+
+    def get_users(self, obj):
+        # Use PublicUserSerializer for the read operation
+        return PublicUserSerializer(obj.users.all(), many=True).data
+
+    def create(self, validated_data):
+        # Extract user ids and remove from validated data
+        user_ids = validated_data.pop('user_ids', [])
+
+        # Create the chat instance
+        chat = Chat.objects.create(**validated_data)
+
+        # Add the users to the chat
+        chat.users.set(user_ids)
+        return chat
+
+    def update(self, instance, validated_data):
+        # Extract user ids and remove from validated data
+        user_ids = validated_data.pop('user_ids', [])
+
+        # Update the chat instance
+        instance.name = validated_data.get('name', instance.name)
+        instance.save()
+
+        # Update the users in the chat
+        if user_ids:
+            instance.users.set(user_ids)
+
+        return instance

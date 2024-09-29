@@ -4,9 +4,9 @@ from django.db.models import Q
 from rest_framework import generics
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from .permissions import ReadIsAuthenticated
-from .serializers import UserSerializer, PublicUserSerializer, CustomTokenObtainPairSerializer
-from .models import User
+from .permissions import ReadIsAuthenticated, IsAuthenticated
+from .serializers import UserSerializer, PublicUserSerializer, CustomTokenObtainPairSerializer, ChatSerializer
+from .models import User, Chat
 
 # Create your views here.
 def index(request):
@@ -35,3 +35,10 @@ class UsersView(generics.ListCreateAPIView):
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+class ChatsView(generics.ListCreateAPIView):
+    serializer_class = ChatSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Chat.objects.filter(users=self.request.user)
