@@ -5,6 +5,9 @@ $primary: #127dff;
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/variables-dark";
 
+$dropdown-link-active-color: $body-color;
+$dropdown-link-active-bg: $gray-200;
+
 $custom-colors: (
   "violet": #a033ff,
   "pink": #ff5c87,
@@ -178,6 +181,14 @@ input.form-control {
 
 .fs-0 {
   padding-bottom: 16px;
+}
+
+.btn-transparent {
+  @include button-variant(transparent, transparent, $gray-600, $gray-300, $active-background: $gray-300);
+}
+
+.dropdown-toggle.dropdown-icon-none::after {
+  display: none;
 }
 
 .theme-gradient-horizontal {
