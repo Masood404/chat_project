@@ -7,24 +7,29 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .models import User
     
-class UserSummarySerializer(serializers.ModelSerializer):
+class BaseUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username"]
+    
+class PublicUserSerializer(BaseUserSerializer):
+    full_name = serializers.SerializerMethodField()
 
-class UserSerializer(serializers.ModelSerializer):
+    class Meta(BaseUserSerializer.Meta):
+        fields = BaseUserSerializer.Meta.fields + ["first_name", "last_name", "full_name"]
+
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}".strip()
+
+class UserSerializer(PublicUserSerializer):
     confirmation = serializers.CharField(required=True, write_only=True)
-    friends = UserSummarySerializer(many=True, read_only=True)
 
-    class Meta:
-        model = User
-        fields = ["first_name", "last_name", "username", "email", "password", "confirmation", "friends"]
+    class Meta(PublicUserSerializer.Meta):
+        fields = PublicUserSerializer.Meta.fields + ["email", "password", "confirmation"]
         extra_kwargs = {
             "username": { "validators": [MinLengthValidator(4)] },
             "password": { "write_only": True, "validators": [validate_password] },
             "email": { "validators": [UniqueValidator(queryset=User.objects.all())] },
-            "sent_requests": { "read_only": True },
-            "recieved_requests": { "read_only": True }
         }
     def create(self, validated_data):
         validated_data.pop("confirmation")
@@ -50,11 +55,6 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("This username is already taken.")
         
         return username
-    
-class PublicUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ["id", "username", "first_name", "last_name"]
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     remember_me = serializers.BooleanField(required=False, default=False)
