@@ -109,7 +109,7 @@ $utilities: map-merge(
 }
 
 a {
-  color: var(--bs-dark);
+  color: var(--bs-theme-dark);
   text-decoration: none;
 
   &:hover {
@@ -136,7 +136,7 @@ input.form-control {
 .nav-link {
   & {
     position: relative;
-    color: var(--bs-dark);
+    color: var(--bs-text-dark);
     font-weight: 600;
   }
 
