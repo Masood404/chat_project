@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom";
 import { Col, Container, Row } from "react-bootstrap";
 
+import useIsMac from "../hooks/useIsMac";
+
 import Button from "../components/Button";
 
 import MessengerStartDownload from "../images/messenger-start-download.svg";
 import MessengerDownloadArrow from "../images/messenger-download-arrow.svg";
 
 const StartDownload = () => {
-    const isMac = navigator.userAgent.indexOf('Mac OS X') != -1;
+    const isMac = useIsMac()
 
     return (
         <div className="wh-100 vh-100 d-flex flex-column">
