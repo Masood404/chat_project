@@ -184,7 +184,13 @@ input.form-control {
 }
 
 .btn-transparent {
-  @include button-variant(transparent, transparent, $gray-600, $gray-300, $active-background: $gray-300);
+  @include button-variant(
+    $background: transparent,
+    $border: transparent,
+    $color: $body-color,
+    $hover-background: $gray-300,
+    $active-background: $gray-300
+  );
 }
 
 .dropdown-toggle.dropdown-icon-none::after {
