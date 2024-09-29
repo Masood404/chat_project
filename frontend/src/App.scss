@@ -35,6 +35,20 @@ $input-placeholder-color: var(secondary-text-emphasis);
 @import "~bootstrap/scss/mixins";
 @import "~bootstrap/scss/utilities";
 
+$percent-size-map: ();
+$percent-size-map-i: 90;
+
+@while $percent-size-map-i < 150 {
+  $percent-size-map: map-merge($percent-size-map, ($percent-size-map-i: $percent-size-map-i * 1%));
+  $percent-size-map-i: $percent-size-map-i + 10;
+}
+
+$pixel-size-map: ();
+
+@for $i from 1 through 100 {
+  $pixel-size-map: map-merge($pixel-size-map, (p-#{$i}: $i * 5px));
+}
+
 $utilities: map-merge(
   $utilities,
   (
@@ -45,17 +59,21 @@ $utilities: map-merge(
           values:
             map-merge(
               map-get(map-get($utilities, "width"), "values"),
-              (
-                90: 90%,
-                110: 100%,
-                120: 120%,
-                130: 130%,
-                140: 140%,
-                150: 150%,
-              )
+              map-merge($pixel-size-map, $percent-size-map)
             ),
         )
       ),
+    "height": 
+      map-merge(
+        map-get($utilities, "height"),
+        (
+          values: 
+            map-merge(
+              map-get(map-get($utilities, "height"), "values"),
+              map-merge($pixel-size-map, $percent-size-map)
+            ),
+        )
+      )
   )
 );
 
