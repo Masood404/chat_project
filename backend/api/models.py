@@ -3,16 +3,11 @@ from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 
-# Create your models here.
 class User(AbstractUser):
     class Meta: 
         ordering = ("first_name", "last_name")
 
     first_name = models.CharField(max_length=150, blank=False, null=False)
-
-from django.db import models
-from django.contrib.auth.models import User
-from django.core.validators import MinLengthValidator
 
 class Chat(models.Model):
     users = models.ManyToManyField(to=User, related_name="chats")
