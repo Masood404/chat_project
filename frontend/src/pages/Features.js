@@ -31,7 +31,7 @@ const Features = () => {
                 >
                     <div>
                         <div className="w-xs-150 w-lg-90 ms-lg-auto position-relative start-50 top-50 translate-middle">
-                            <img className="w-100 h-auto" src={FeaturesImage} alt="Features Image" />
+                            <img className="w-100 h-auto" src={FeaturesImage} alt="Features" />
                         </div>
                     </div>
                 </Col>
