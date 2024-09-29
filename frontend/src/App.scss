@@ -78,6 +78,7 @@ $utilities: map-merge(
 );
 
 @import "~bootstrap/scss/bootstrap";
+@import "~bootstrap-icons/font/bootstrap-icons";
 
 @mixin checked-bg($color-name, $color-value) {
   .checked-bg-#{$color-name} {
