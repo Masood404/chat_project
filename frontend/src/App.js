@@ -9,7 +9,6 @@ import Features from "./pages/Features";
 import DesktopApp from "./pages/DesktopApp";
 import StartDownload from "./pages/StartDownload";
 
-import PrivateRoute from "./routing/PrivateRoute";
 import PublicRoute from "./routing/PublicRoute";
 import WithNavbar from "./routing/WithNavbar";
 
@@ -18,11 +17,11 @@ function App() {
 		<div className="App">
 			<Routes>
 				{["/", "/home"].map((path, i) => <Route key={i} exact path={path} element={<Home />} />)}
+				<Route exact path="/home/:sideListParam" element={<Home />} />
 				<Route element={<WithNavbar />}>
 					<Route exact path="/features" element={<Features />} />
 					<Route exact path="/desktop" element={<DesktopApp />} />
 				</Route>
-
 				<Route element={<PublicRoute />}>
 					<Route exact path="/login" element={<Login />} />
 				</Route>
