@@ -4,14 +4,15 @@ import { useNavigate } from "react-router-dom";
 
 import { Container, Row, Col } from "react-bootstrap";
 
+import useIsMac from "../hooks/useIsMac";
+
 import Button from "../components/Button";
 
 import DownloadMessenger from "../images/download-messenger.png";
 
 const DesktopApp = () => {
     const navigate = useNavigate();
-
-    const isMac = navigator.userAgent.indexOf('Mac OS X') != -1;
+    const isMac = useIsMac();
 
     return (
         <Container fluid className="px-4 px-xxl-10">
