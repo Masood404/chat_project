@@ -5,7 +5,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from .models import User, Chat
+from .models import User, Chat, ChatRequest
     
 class BaseUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -78,41 +78,52 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         return data
     
 class ChatSerializer(serializers.ModelSerializer):
-    users = serializers.SerializerMethodField()  # For read operation
-    user_ids = serializers.ListField(  # For write operation
-        write_only=True,
-        child=serializers.IntegerField()
-    )
+    admin = PublicUserSerializer()
+    users = BaseUserSerializer(many=True)
 
     class Meta:
         model = Chat
-        fields = ['id', 'name', 'users', 'user_ids']  # `users` is for read, `user_ids` is for write
+        fields = ['id', 'name', 'admin', 'users']
 
-    def get_users(self, obj):
-        # Use PublicUserSerializer for the read operation
-        return PublicUserSerializer(obj.users.all(), many=True).data
+class ChatRequestSerializer(serializers.ModelSerializer):
+    receivers = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
+        write_only=True,
+        required=True
+    )
+    name = serializers.CharField(required=False, allow_blank=True)
+
+    class Meta:
+        model = ChatRequest
+        fields = ['id', 'chat', 'sender', 'receiver', 'status', 'created_at', 'updated_at', 'name', 'receivers']
+        extra_kwargs = {
+            'chat': { 'required': False },
+            'receiver' : { 'read_only': True, 'required': False }
+        }
 
     def create(self, validated_data):
-        # Extract user ids and remove from validated data
-        user_ids = validated_data.pop('user_ids', [])
+        # receivers from validated data
+        receivers = validated_data.pop('receivers')
 
-        # Create the chat instance
-        chat = Chat.objects.create(**validated_data)
+        # Create the chat if it doesn't exist
+        chat_id = validated_data.get('chat', None)
+        if not chat_id:
+            # Get the chat name from the request; will be None if not provided
+            chat_name = validated_data.pop('name', None)
 
-        # Add the users to the chat
-        chat.users.set(user_ids)
-        return chat
+            # Validate the name against the Chat model's constraints
+            if chat_name:
+                chat = Chat(admin=validated_data['sender'], name=chat_name)
+                chat.full_clean()  
+                chat.save() 
+            else:
+                chat = Chat.objects.create(admin=validated_data['sender'])
 
-    def update(self, instance, validated_data):
-        # Extract user ids and remove from validated data
-        user_ids = validated_data.pop('user_ids', [])
+            validated_data['chat'] = chat
 
-        # Update the chat instance
-        instance.name = validated_data.get('name', instance.name)
-        instance.save()
+        chat_requests = []
 
-        # Update the users in the chat
-        if user_ids:
-            instance.users.set(user_ids)
+        for receiver in receivers:
+            chat_requests.append(ChatRequest.objects.create(**validated_data, receiver=receiver))
 
-        return instance
+        return chat_requests
