@@ -10,6 +10,10 @@ class User(AbstractUser):
     first_name = models.CharField(max_length=150, blank=False, null=False)
 
 class Chat(models.Model):
+    """
+    Chat or otherwise known as Chat Room model.
+    """
+    admin = models.ForeignKey(to=User, on_delete=models.CASCADE)
     users = models.ManyToManyField(to=User, related_name="chats")
     name = models.CharField(null=True, max_length=128, validators=[MinLengthValidator(4)])
 
