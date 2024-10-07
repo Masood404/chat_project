@@ -101,18 +101,37 @@ class ChatRequestSerializer(serializers.ModelSerializer):
             'receiver' : { 'read_only': True, 'required': False }
         }
 
+    def validate_chat(self, chat): 
+        """
+        Check if the sender is the owner of the chat with the provided chat_id
+        """
+        try:
+            chat = Chat.objects.get(id=chat.id)
+        except Chat.DoesNotExist:
+            raise serializers.ValidationError(f'Chat with id {chat.id} does not exist.')
+
+        sender_id = self.initial_data.get('sender')
+        if sender_id is None:
+            raise serializers.ValidationError('Sender ID is missing from validated data.')
+
+        if chat.admin.id != sender_id:
+            raise serializers.ValidationError('The sender is not authorized to send requests for the provided chat id.')
+
+        return chat
+
     def create(self, validated_data):
         # receivers from validated data
         receivers = validated_data.pop('receivers')
 
-        # Create the chat if it doesn't exist
+        # Get the chat id from validated data
         chat_id = validated_data.get('chat', None)
-        if not chat_id:
-            # Get the chat name from the request; will be None if not provided
-            chat_name = validated_data.pop('name', None)
+        # Extract the chat name from the request; will be None if not provided
+        chat_name = validated_data.pop('name', None)
 
-            # Validate the name against the Chat model's constraints
+        # Create the chat if it doesn't exist
+        if not chat_id:
             if chat_name:
+                # Validate the name against the Chat model's constraints and create it.
                 chat = Chat(admin=validated_data['sender'], name=chat_name)
                 chat.full_clean()  
                 chat.save() 
@@ -124,6 +143,12 @@ class ChatRequestSerializer(serializers.ModelSerializer):
         chat_requests = []
 
         for receiver in receivers:
-            chat_requests.append(ChatRequest.objects.create(**validated_data, receiver=receiver))
+            # Check for duplicate chat requests
+            chat_request = ChatRequest.objects.filter(receiver=receiver, chat=chat_id)
+            if not chat_request.exists():
+                # If there is no duplication found then create a new chat request
+                chat_request = ChatRequest.objects.create(**validated_data, receiver=receiver)
+
+            chat_requests.append(chat_request)
 
         return chat_requests
