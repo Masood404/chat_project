@@ -53,7 +53,7 @@ class ChatRequest(models.Model):
             # Constraint to not allow the equality of sender and receiver
             models.CheckConstraint(
                 check=~models.Q(sender=models.F('receiver')),
-                name='price_not_equal_discount_price'
+                name='sender_not_equal_receiver'
             )
         ]
 
