@@ -49,24 +49,30 @@ class ChatRequestsView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        """
+        Filters the queryset based on two things.
+        The requested user's id and their inbox provided "sent" or "received".
+        If sent is provided in the query parameters then loads the "sent" inbox,
+        else loads for "received" inbox.
+        """
         user_id = self.request.user.id
 
         if 'sent' in self.request.query_params:
-            chat_requests = ChatRequest.objects.filter(sender=user_id)
-        else:
-            chat_requests = ChatRequest.objects.filter(receiver=user_id)
-
-        return chat_requests
+            return ChatRequest.objects.filter(sender=user_id)
+        
+        return ChatRequest.objects.filter(receiver=user_id)
     
-    def post(self, request, *args, **kwargs):
-        request_data = request.data.copy()
-        request_data['sender'] = request.user.id
+    def create(self, request, *args, **kwargs):
+        """
+        Uses the "ChatRequestCreateSerializer" to create multiple chat_requests at once.
+        Then after all gives a response with a list of all the created chat_requests using the default
+        serializer class "ChatRequestSerializer" with the many argument set to true so it provides a list.
+        """
+        serializer = ChatRequestCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        serializer = self.get_serializer(data=request_data)
+        created_requests = serializer.save()
 
-        if serializer.is_valid():
-            chat_requests = serializer.save()
-
-            return Response(self.get_serializer_class()(chat_requests, many=True).data, status=status.HTTP_201_CREATED)
+        return Response(self.serializer_class(created_requests, many=True).data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
