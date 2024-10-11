@@ -77,15 +77,24 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         return data
     
-class ChatSerializer(serializers.ModelSerializer):
+class BaseChatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chat
+        fields = ['id', 'name']
+
+class ChatSerializer(BaseChatSerializer):
     admin = PublicUserSerializer()
     users = BaseUserSerializer(many=True)
 
-    class Meta:
-        model = Chat
-        fields = ['id', 'name', 'admin', 'users']
+    class Meta(BaseChatSerializer.Meta):
+        fields = BaseChatSerializer.Meta.fields + ['admin', 'users']
 
 class ChatRequestSerializer(serializers.ModelSerializer):
+    accept = serializers.BooleanField(write_only=True, required=True)
+    sender = PublicUserSerializer()
+    receiver = PublicUserSerializer()
+    chat = BaseChatSerializer()
+
     class Meta:
         model = ChatRequest
         fields = ['id', 'chat', 'sender', 'receiver', 'status', 'created_at', 'updated_at']
