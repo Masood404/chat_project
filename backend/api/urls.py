@@ -11,5 +11,5 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('users/', views.UsersView.as_view(), name='users'),
     path('chats/', views.ChatsView.as_view(), name='chats'),
-    path('chat/requests/', views.ChatRequestsView.as_view(), name='chat_requests')
+    path('chat-requests/', views.ChatRequestsView.as_view(), name='chat_requests'),
 ]
