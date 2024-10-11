@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - chat_requests
     
   pull_request:
     branches:
