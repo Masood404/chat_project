@@ -101,9 +101,9 @@ class ChatRequestTests(TestCase):
         results = [
             {
                 'id': chat_request['id'],
-                'chat': chat_request['chat'],
-                'sender': chat_request['sender'],
-                'receiver': chat_request['receiver']
+                'chat': chat_request['chat']['id'],
+                'sender': chat_request['sender']['id'],
+                'receiver': chat_request['receiver']['id']
             }
             for chat_request in response.json()['results']
         ]
@@ -144,9 +144,9 @@ class ChatRequestTests(TestCase):
         ]
         results = [
             {
-                'chat': created_request['chat'],
-                'sender': created_request['sender'],
-                'receiver': created_request['receiver']
+                'chat': created_request['chat']['id'],
+                'sender': created_request['sender']['id'],
+                'receiver': created_request['receiver']['id']
             }
             for created_request in response.json()
         ]
@@ -257,9 +257,9 @@ class ChatRequestTests(TestCase):
 
         results = [
             {
-                'chat': chat_request['chat'],
-                'sender': chat_request['sender'],
-                'receiver': chat_request['receiver']
+                'chat': chat_request['chat']['id'],
+                'sender': chat_request['sender']['id'],
+                'receiver': chat_request['receiver']['id']
             }
             for chat_request in response.json()
         ]
