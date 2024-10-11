@@ -49,6 +49,13 @@ class ChatRequest(models.Model):
 
     class Meta:
         ordering = ('created_at', )
+        constraints = [
+            # Constraint to not allow the equality of sender and receiver
+            models.CheckConstraint(
+                check=~models.Q(sender=models.F('receiver')),
+                name='price_not_equal_discount_price'
+            )
+        ]
 
     def accept(self):
         """
