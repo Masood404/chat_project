@@ -62,7 +62,7 @@ class ChatRequest(models.Model):
         Accept the chat request and add the receiver to the chat.
         """
         self.status = self.ACCEPTED
-        self.chat.add_user(self.receiver)
+        self.chat.users.add(self.receiver)
         self.save()
 
     def decline(self):
