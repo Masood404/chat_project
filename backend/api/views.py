@@ -6,7 +6,7 @@ from rest_framework.views import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .permissions import ReadIsAuthenticated, IsAuthenticated
-from .serializers import UserSerializer, PublicUserSerializer, CustomTokenObtainPairSerializer, ChatSerializer, ChatRequestSerializer
+from .serializers import UserSerializer, PublicUserSerializer, CustomTokenObtainPairSerializer, ChatSerializer, ChatRequestSerializer, ChatRequestCreateSerializer
 from .models import User, Chat, ChatRequest
 
 # Create your views here.
@@ -47,6 +47,12 @@ class ChatsView(generics.ListCreateAPIView):
 class ChatRequestsView(generics.ListCreateAPIView):
     serializer_class = ChatRequestSerializer
     permission_classes = [IsAuthenticated]
+    
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return ChatRequestCreateSerializer
+        
+        return ChatRequestSerializer
 
     def get_queryset(self):
         """
@@ -68,7 +74,7 @@ class ChatRequestsView(generics.ListCreateAPIView):
         Then after all gives a response with a list of all the created chat_requests using the default
         serializer class "ChatRequestSerializer" with the many argument set to true so it provides a list.
         """
-        serializer = ChatRequestCreateSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         created_requests = serializer.save()
