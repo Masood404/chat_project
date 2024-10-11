@@ -14,15 +14,15 @@ class Chat(models.Model):
     Chat or otherwise known as Chat Room model.
     """
     admin = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    users = models.ManyToManyField(to=User, related_name="chats")
+    users = models.ManyToManyField(to=User, related_name="chats", through='Chatship')
     name = models.CharField(null=True, max_length=128, validators=[MinLengthValidator(4)])
 
-    def add_user(self, user):
-        """
-        Add a user to the chat if they are not already part of it.
-        """
-        if not self.users.filter(id=user.id).exists():
-            self.users.add(user)
+class Chatship(models.Model):
+    chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('chat', 'user')
 
 class Message(models.Model):
     chat = models.ForeignKey(to=Chat, on_delete=models.CASCADE, related_name="messages")
