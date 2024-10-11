@@ -47,6 +47,9 @@ class ChatRequest(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ('created_at', )
+
     def accept(self):
         """
         Accept the chat request and add the receiver to the chat.
