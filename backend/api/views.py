@@ -5,7 +5,7 @@ from rest_framework import generics, status
 from rest_framework.views import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from .permissions import ReadIsAuthenticated, IsAuthenticated
+from .permissions import ReadIsAuthenticated, IsAuthenticated, MethodIsOwner, method_is_owner_group
 from .serializers import UserSerializer, PublicUserSerializer, CustomTokenObtainPairSerializer, ChatSerializer, ChatRequestSerializer, ChatRequestCreateSerializer
 from .models import User, Chat, ChatRequest
 
@@ -80,5 +80,19 @@ class ChatRequestsView(generics.ListCreateAPIView):
         created_requests = serializer.save()
 
         return Response(self.serializer_class(created_requests, many=True).data, status=status.HTTP_201_CREATED)
+    
+class ChatRequestView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class =  ChatRequestSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = ChatRequest.objects.all()
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get_permissions(self):
+        permissions = super().get_permissions()
+
+        permissions = permissions + method_is_owner_group([
+            # For user that is only the receiver of a chat request's  object permission only when its an UPDATE method
+            MethodIsOwner(owner_fields=['receiver'], methods=['PUT']),
+            # For user is only the sender of a chat request's object permission only when its a DELETE method
+            MethodIsOwner(owner_fields=['sender'], methods=['DELETE'])
+        ])
+        return permissions
