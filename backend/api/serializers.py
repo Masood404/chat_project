@@ -83,11 +83,16 @@ class BaseChatSerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 class ChatSerializer(BaseChatSerializer):
-    admin = PublicUserSerializer()
-    users = BaseUserSerializer(many=True)
+    admin = PublicUserSerializer(read_only=True)
+    users = BaseUserSerializer(many=True, read_only=True)
 
     class Meta(BaseChatSerializer.Meta):
         fields = BaseChatSerializer.Meta.fields + ['admin', 'users']
+
+    def create(self, validated_data):
+        validated_data['admin'] = self.context['request'].user
+
+        return super().create(validated_data)
 
 class ChatRequestSerializer(serializers.ModelSerializer):
     accept = serializers.BooleanField(write_only=True, required=True)
