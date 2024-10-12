@@ -1,3 +1,4 @@
+from typing import Any
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
@@ -16,6 +17,21 @@ class Chat(models.Model):
     admin = models.ForeignKey(to=User, on_delete=models.CASCADE)
     users = models.ManyToManyField(to=User, related_name="chats", through='Chatship')
     name = models.CharField(null=True, max_length=128, validators=[MinLengthValidator(4)])
+    
+    class Manager(models.Manager):
+        def create(self, **kwargs: Any) -> "Chat":
+            instance = super().create(**kwargs)  
+            
+            # Get the admin of the newly created chat
+            admin = instance.admin
+
+            # Add the admin to the users field of the chat
+            if admin: instance.users.add(admin)
+
+            return instance
+
+    objects = Manager()
+    
 
 class Chatship(models.Model):
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
