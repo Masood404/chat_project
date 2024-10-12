@@ -91,13 +91,25 @@ class ChatSerializer(BaseChatSerializer):
 
 class ChatRequestSerializer(serializers.ModelSerializer):
     accept = serializers.BooleanField(write_only=True, required=True)
-    sender = PublicUserSerializer()
-    receiver = PublicUserSerializer()
-    chat = BaseChatSerializer()
+    sender = PublicUserSerializer(read_only=True)
+    receiver = PublicUserSerializer(read_only=True)
+    chat = BaseChatSerializer(read_only=True)
 
     class Meta:
         model = ChatRequest
-        fields = ['id', 'chat', 'sender', 'receiver', 'status', 'created_at', 'updated_at']
+        fields = ['id', 'chat', 'sender', 'receiver', 'status', 'created_at', 'updated_at', 'accept']
+        read_only_fields = ['id', 'chat', 'sender', 'receiver', 'status', 'created_at', 'updated_at']
+
+    def update(self, instance, validated_data):
+        accept = validated_data.get('accept', None)
+
+        if accept is not None and instance.is_pending():
+            if accept:
+                instance.accept()
+            else:
+                instance.decline()
+
+        return super().update(instance, validated_data)
     
 class ChatRequestCreateSerializer(serializers.Serializer):
     chat = serializers.PrimaryKeyRelatedField(queryset=Chat.objects.all(), write_only=True, required=False)
