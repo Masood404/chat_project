@@ -300,14 +300,20 @@ class ChatRequestTests(TestCase):
     def _test_change_status(self, accept: bool):
         authenticate_user(self)
 
-        chat_request_id = self.received_chat_requests[0].id
+        chat_request = self.received_chat_requests[0]
 
-        response = self._change_status(chat_request_id, accept)
+        response = self._change_status(chat_request.id, accept)
         response_json = response.json()
 
         self.assertEqual(response.status_code, 200)
 
         self.assertEqual('A' if accept else 'D', response_json['status'])
+
+        chat = Chat.objects.get(id=chat_request.chat.id)
+        if accept:
+            self.assertIn(self.user, chat.users.all())
+        else:
+            self.assertNotIn(self.user, chat.users.all())
 
     def test_accept(self): self._test_change_status(True)
 
