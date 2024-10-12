@@ -54,6 +54,50 @@ class TokenObtainPairTests(TestCase):
         """
         self._test_refresh_expiry(False, settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'])
 
+class ChatTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = User.objects.create_user(id=1, username='testuser', password='testpassword')
+
+    def test_get_list(self):
+        """
+        Test on ChatsView's GET method (List) that should respond with all the chats that the current user is in.
+        """
+        authenticate_user(self)
+
+        # Create dummy users
+        user2 = User.objects.create_user(id=2, username='testuser2', password='testpassword')
+        user3 = User.objects.create_user(id=3, username='testuser3', password='testpassword')
+
+        # Create dummy chats
+        Chat.objects.create(admin=self.user).users.add(user2)
+        Chat.objects.create(admin=self.user).users.add(user3)
+        Chat.objects.create(admin=user2).users.add(user3)
+
+        response = self.client.get(api_reverse('api:chats'))
+        results = response.json()['results']
+
+        # Assert that the current user is in all chats
+        for chat in results:
+            user_ids = {user['id'] for user in chat['users']}  # Create a set of user IDs in the chat
+            self.assertIn(self.user.id, user_ids, f"User ID {self.user.id} is not in chat ID {chat['id']}")
+
+    def test_create(self):
+        authenticate_user(self)
+
+        chat_name = "created_test_chat"
+        admin_id = self.user.id
+
+        response = self.client.post(api_reverse('api:chats'), { "name": chat_name })
+        response_json = response.json()
+
+        self.assertEqual(response.status_code, 201)
+
+        self.assertEqual(response_json['name'], chat_name)
+        self.assertEqual(response_json['admin']['id'], admin_id)
+        # Assert admin as the first user inside the users
+        self.assertEqual(response_json['users'][0]['id'], admin_id)
+
 class ChatRequestTests(TestCase):
     def setUp(self):
         self.client = APIClient()
