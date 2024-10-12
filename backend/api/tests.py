@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.conf import settings
 from rest_framework.test import APIClient
 from rest_framework.reverse import reverse as api_reverse
-from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from rest_framework_simplejwt.tokens import RefreshToken
 from datetime import datetime, timedelta
 
 from .models import User, ChatRequest, Chat
@@ -112,11 +112,9 @@ class ChatRequestTests(TestCase):
 
         self.assertEqual(sorted(results, key=sort_key), sorted(expected_results, key=sort_key))
 
-    def test_get_list_sent(self):
-        self._test_get_list(True)
+    def test_get_list_sent(self): self._test_get_list(True)
 
-    def test_get_list_received(self):
-        self._test_get_list(False)
+    def test_get_list_received(self): self._test_get_list(False)
 
     def test_create(self):
         authenticate_user(self)
@@ -267,3 +265,94 @@ class ChatRequestTests(TestCase):
         def sort_key(x): return x['receiver']
 
         self.assertEqual(sorted(results, key=sort_key), sorted(expected_results, key=sort_key))
+
+    def test_get(self):
+        authenticate_user(self)
+
+        chat_request = self.sent_chat_requests[0]
+
+        response = self.client.get(api_reverse('api:chat_request', args=[chat_request.id]))
+        response_json = response.json()
+
+        self.assertEqual(response.status_code, 200)
+
+        expected_result = {
+            "id": chat_request.id,
+            "sender": chat_request.sender.id,
+            "receiver": chat_request.receiver.id,
+            "status": chat_request.status
+        }
+
+        result = {
+            "id": response_json['id'],
+            "sender": response_json['sender']['id'],
+            "receiver": response_json['receiver']['id'],
+            "status": response_json['status']
+        }
+
+        self.assertEqual(result, expected_result)
+
+    def _change_status(self, chat_request_id: int, accept: bool):
+        return self.client.put(api_reverse('api:chat_request', args=[chat_request_id]), {
+            'accept': accept
+        })
+    
+    def _test_change_status(self, accept: bool):
+        authenticate_user(self)
+
+        chat_request_id = self.received_chat_requests[0].id
+
+        response = self._change_status(chat_request_id, accept)
+        response_json = response.json()
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual('A' if accept else 'D', response_json['status'])
+
+    def test_accept(self): self._test_change_status(True)
+
+    def test_decline(self): self._test_change_status(False)
+
+    def test_delete(self):
+        authenticate_user(self)
+
+        chat_request = self.sent_chat_requests[0]
+
+        response = self.client.delete(api_reverse('api:chat_request', args=[chat_request.id]))
+
+        self.assertEqual(response.status_code, 204)
+
+    def _test_unauthorized_change_status(self, accept):
+        """
+        Tests for unauthorization of a status change made by any other user who is not the receiver
+        """
+        # The user who sent it should not be authorized too
+        authenticate_user(self)
+
+        chat_request_id = self.sent_chat_requests[0].id
+
+        response = self._change_status(chat_request_id, accept)
+
+        self.assertEqual(response.status_code, 403)
+
+        # Other user
+        authenticate_user(self, self.user3)
+
+        chat_request_id = self.received_chat_requests[0].id
+
+        response = self._change_status(chat_request_id, accept)
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_unauthorized_accept(self): self._test_unauthorized_change_status(True)
+
+    def test_unauthorized_decline(self): self._test_unauthorized_change_status(False)
+
+    def test_unauthorized_delete(self):
+        authenticate_user(self)
+
+        chat_request = self.received_chat_requests[0]
+
+        response = self.client.delete(api_reverse('api:chat_request', args=[chat_request.id]))
+
+        self.assertEqual(response.status_code, 403)
