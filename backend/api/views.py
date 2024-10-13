@@ -33,6 +33,13 @@ class UsersView(generics.ListCreateAPIView):
             )
 
         return User.objects.all()
+    
+class UserView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserSerializer
+
+    def get_object(self):
+        return self.request.user
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
