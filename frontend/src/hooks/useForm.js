@@ -1,9 +1,12 @@
 import { useState } from "react";
 
-const useForm = (initial, onSubmit) => {
+/* Difference between onSubmit and success is that onSubmit will use whatever thrown error to render field errors or invalidity, 
+whereas onSuccess just runs after submit */
+const useForm = (initial, onSubmit, onSuccess) => {
     const [formData, setFormData] = useState(initial);
     const [formErrors, setFormErrors] = useState({
         non_field_errors: [],
+        // Extract the keys from the "intial" variable and intially give their value as an empty array(as of no errors yet)
         ...Object.keys(initial).reduce((acc, key) => {
             acc[key] = [];
             return acc;
@@ -23,11 +26,14 @@ const useForm = (initial, onSubmit) => {
         e.preventDefault();
         setIsSubmitting(true);
         try {
+            // Here onSubmit will be intercepted for any possible field errors whereas onSucess is responsible for its own errors
             await onSubmit?.(formData, e);
+            onSuccess?.(formData, e);
         } catch (error) {
             const data = error.response?.data;
 
             if (data) {
+                // Try to extract non_field_errors from the response and if not available, try to extract any detail from the response
                 const non_field_errors = data.non_field_errors ?? data.detail ? [data.detail] : [];
 
                 setFormErrors({
@@ -36,7 +42,7 @@ const useForm = (initial, onSubmit) => {
                 });
             }
             else {
-                console.error(error);
+                throw error;
             }
         } finally { setIsSubmitting(false); }
     };
