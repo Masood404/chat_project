@@ -79,9 +79,9 @@ const AuthProvider = ({ children }) => {
             if (error instanceof UnexpectedResponseData || error instanceof NotFound) {
                 console.error(error.message);
             }
-            else {
-                throw error;
-            }
+            // Logout when no user is found
+            else if (error?.response?.status === 401) logout();
+            else throw error;
         }
     };
 
@@ -142,3 +142,4 @@ const AuthProvider = ({ children }) => {
 
 export default AuthProvider;
 export { AuthContext, useAuth };
+
