@@ -39,7 +39,7 @@ $input-placeholder-color: var(secondary-text-emphasis);
 @import "~bootstrap/scss/utilities";
 
 $percent-size-map: ();
-$percent-size-map-i: 90;
+$percent-size-map-i: 0;
 
 @while $percent-size-map-i < 150 {
   $percent-size-map: map-merge($percent-size-map, ($percent-size-map-i: $percent-size-map-i * 1%));
@@ -127,9 +127,13 @@ input.form-control {
   width: 286px;
 }
 
+$scrollbar-width: 1rem;
+
 .App {
   font-family: Helvetica Neue, Segoe UI, Helvetica, Arial, sans-serif;
   overflow-x: clip;
+  scrollbar-color: $gray-300 transparent;
+  scrollbar-width: $scrollbar-width;
 }
 
 .navbar-light {
@@ -184,15 +188,27 @@ input.form-control {
 }
 
 .btn-transparent {
-  @include button-variant(
-    $background: transparent,
-    $border: transparent,
-    $color: $body-color,
-    $hover-background: $gray-300,
-    $active-background: $gray-300
-  );
-}
+  color: var(--bs-body-color) !important;
 
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: none;
+  --bs-btn-hover-bg: var(--bs-secondary-bg);
+  --bs-btn-hover-border-color: transparent;
+  --bs-btn-active-bg: var(--bs-secondary-bg);
+  --bs-btn-active-border-color: none;
+
+}
+.btn-soft-transparent {
+  color: var(--bs-body-color) !important;
+
+  --bs-btn-bg: rgba(127, 127, 127, 0.1);
+  --bs-btn-border-color: none;
+  --bs-btn-hover-bg: var(--bs-secondary-bg);
+  --bs-btn-hover-border-color: transparent;
+  --bs-btn-active-bg: var(--bs-secondary-bg);
+  --bs-btn-active-border-color: none;
+
+}
 .dropdown-toggle.dropdown-icon-none::after {
   display: none;
 }
@@ -206,4 +222,39 @@ input.form-control {
     var(--bs-violet) 20%,
     var(--bs-pink) 60%
   );
+}
+
+.scroll-container-wrapper {
+  background-color: var(--bs-body-bg);
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+  position: relative;
+
+  &::before, &::after {
+    content: "";
+    height: 2rem;
+    width: 100%;
+    position: absolute;
+    padding-right: $scrollbar-width;
+    background-clip: content-box !important;
+  }
+
+  &::before {
+    top: 0;
+    background: linear-gradient(0deg, rgba(255,255,255,0) 0%, var(--bs-body-bg) 65%);
+  }
+
+  & > .scroll-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    padding-right: $scrollbar-width !important;
+  }
+
+  &::after {
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0) 0%, var(--bs-body-bg) 65%);
+  }
 }
