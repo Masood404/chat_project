@@ -59,8 +59,8 @@ const AuthProvider = ({ children }) => {
             if (error instanceof UnexpectedResponseData) console.error(error.message);
             // Just warn if the refresh token is not found
             else if (error instanceof NotFound) console.warn(error.message);
+            else if (error?.response?.status === 401) logout(); 
             else throw error;
-            logout();
         }
 
     };
