@@ -3,12 +3,13 @@ import { FormControl } from 'react-bootstrap';
 
 const variantClassMap = {
     "primary": "",
-    "secondary": "bg-light-subtle border-0 rounded-3"
+    "secondary": "bg-light-subtle border-0 rounded-3",
+    "none": "border-0 shadow-none bg-transparent"
 };
 
-const Input = ({ customVariant = "primary", className = "", containerClass = "", errors = [], ...props }) => {
+const Input = ({ customVariant = "primary", className = "", containerClass = "mb-3", errors = [], ...props }) => {
     return (
-        <div className={`mb-3 ${containerClass}`}>
+        <div className={containerClass}>
             <FormControl
                 className={classNames(
                     'py-2',
