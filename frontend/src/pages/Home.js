@@ -1,8 +1,9 @@
-import classNames from "classnames";
+import axiosInstance from "../axiosInstance";
+import { UnexpectedResponseData } from "../errors";
 
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Dropdown, Form, Button as BsButton } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 
 import { useAuth } from "../hooks/AuthProvider";
 import useForm from "../hooks/useForm";
@@ -12,17 +13,18 @@ import MessengerRegister from "../images/messenger-register-image.png";
 import AppStore from "../images/app-store.svg";
 import MicrosoftStore from "../images/microsoft-store.png";
 
-import Chats from "../containers/side-lists/Chats";
+import Chats from "../components/side-lists/Chats";
 import ChatRequests from "../containers/side-lists/ChatRequests";
 import Archive from "../containers/side-lists/Archive";
 import WithNavbar from "../routing/WithNavbar";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import NonFieldErrors from "../components/NonFieldErrors";
-import Pfp from "../components/Pfp";
+import SideNavButton from "../components/SideNavButton";
+import SettingsButton from "../components/SettingsButton";
 
 const PublicHome = ({ auth }) => {
-    const { register } = auth;
+    const { register, login } = auth;
 
     const { formErrors, isSubmitting, handleSubmit, getInputProps } = useForm({
         first_name: '',
@@ -31,7 +33,7 @@ const PublicHome = ({ auth }) => {
         email_address: '',
         password: '',
         confirmation: ''
-    }, register);
+    }, register, login);
 
     return (
         <div className="row g-3 px-4 px-xxl-10">
@@ -111,53 +113,21 @@ const PublicHome = ({ auth }) => {
     );
 };
 
-//#region Private Home Components
-
-const sideListsConfig = {
-    chats: { icon: <i className="bi bi-chat-fill"></i>, component: Chats },
-    chatRequests: { icon: <i className="bi bi-chat-dots-fill"></i>, component: ChatRequests },
-    archive: { icon: <i className="bi bi-archive-fill"></i>, component: Archive }
-};
-
-const SideNavButton = ({ children, onClick, active = false }) => {
-    return (
-        <BsButton className="w-100 px-1 d-block" variant="transparent" size="lg" onClick={onClick} active={active}>
-            {children}
-        </BsButton>
-    );
-};
-
-const DropdownItem = ({ children, icon, className = "", ...props }) => {
-    return (
-        <li>
-            <Dropdown.Item {...props} className={classNames(
-                "fw-medium d-flex gap-3 p-2 text-decoration-none",
-                className
-            )}>
-                <div className="w-p-6 h-p-6 rounded-circle bg-body-secondary d-flex justify-content-center align-items-center">
-                    {icon ? icon : <i className="bi bi-info-circle-fill"></i>}
-                </div>
-                <div className="flex-grow-1">
-                    {children}
-                </div>
-            </Dropdown.Item>
-        </li>
-    );
-};
-
-const DropdownDivider = () => {
-    return <Dropdown.Divider className="mx-2" />
-};
-
 const PrivateHome = ({ auth }) => {
-    const { logout } = auth;
+    const { user, accessToken, logout } = auth;
     const navigate = useNavigate();
     const { sideListParam } = useParams();
     const isMac = useIsMac();
 
+    const [chats, setChats] = useState([]);
+    const [chatIndex, setChatIndex] = useState(0);
+
     const [messages, setMessages] = useState([]);
+
     const [showSideList, setShowSideList] = useState(false);
     const [sideList, setSideList] = useState(sideListParam || 'chats');
+
+    const [main, show] = useState('messages');
 
     // Update navigation on sideList change
     useEffect(() => {
@@ -171,14 +141,61 @@ const PrivateHome = ({ auth }) => {
         }
     }, [sideListParam]);
 
+    useEffect(() => {
+        // Load the chats for the current user. The "current user" filter is done by the api.
+        if (accessToken) {
+            axiosInstance('/chats/')
+                .then(({ data }) => {
+                    if (!data.results) throw new UnexpectedResponseData(data);
+                        
+                    setChats(data.results);
+                })
+                .catch(error => {
+                    if (error instanceof UnexpectedResponseData) console.error(error.message);
+                    else throw error;
+                });
+        }
+    }, [accessToken]);
+
+    useEffect(() => {
+        setMessages(chats.length > 0 ? chats[chatIndex].admin.full_name : 'No chats found');
+    }, [chatIndex]);
+
     const handleSideListChange = (key) => {
         setSideList(key);
         setShowSideList(true);
+        show('messages');
     };
 
-    const renderSideListComponent = () => {
-        const SelectedComponent = sideListsConfig[sideList].component;
-        return <SelectedComponent setMessages={setMessages} setShowSideList={setShowSideList} />;
+    const handleChatChange = newChatIndex => () => {
+        setChatIndex(newChatIndex);
+        setShowSideList(false);
+        show('messages')
+    };  
+    const handleComposeClick = () => { show('compose') };
+
+    const sideListsConfig = {
+        chats: { icon: <i className="bi bi-chat-fill"></i>, component: <Chats 
+            selfId={user?.id} 
+            chats={chats} 
+            chatIndex={chatIndex} 
+            handleChatChange={handleChatChange}
+            handleComposeClick={handleComposeClick}
+        /> },
+        chatRequests: { icon: <i className="bi bi-chat-dots-fill"></i>, component: <ChatRequests /> },
+        archive: { icon: <i className="bi bi-archive-fill"></i>, component: <Archive /> }
+    };
+
+    const mainConfig = {
+        messages: (
+            <div>{messages ?? 'No chats found'}</div>
+        ),
+        compose: (
+            <div className="d-flex align-items-center pb-2 px-2 border-bottom">
+                <div>To: </div>
+                <Input customVariant="none" containerClass="flex-grow-1" className="w-100" />
+            </div>
+        )
     };
 
     return (
@@ -196,62 +213,18 @@ const PrivateHome = ({ auth }) => {
                     ))}
                 </div>
                 <div>
-                    <Dropdown drop="up">
-                        <Dropdown.Toggle 
-                            variant="transparent"
-                            className="dropdown-icon-none p-1 rounded-circle" 
-                        >
-                            <Pfp className="fs-4 h-p-7 w-p-7" />
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu className="border-0 shadow mb-3 py-2 px-1 w-p-65 rounded-3">
-                            <DropdownItem 
-                                icon={<i className="bi bi-gear-wide"></i>}
-                            >
-                                Preferences
-                            </DropdownItem>
-                            <DropdownDivider />
-                            <DropdownItem>
-                                Info
-                            </DropdownItem>
-                            <DropdownItem 
-                                icon={<i className="bi bi-exclamation-triangle-fill"></i>}
-                            >
-                                Report a Problem
-                            </DropdownItem>
-                            <DropdownDivider />
-                            <DropdownItem 
-                                icon={<i className="bi bi-messenger"></i>}
-                                as={Link}
-                                to="/desktop"
-                            >
-                                Try Messenger for {isMac ? 'Mac' : 'Windows'}
-                            </DropdownItem>
-                            <DropdownItem
-                                icon={<i className="bi bi-box-arrow-right ms-1"></i>}
-                                as={Link}
-                                to="/login" 
-                                onClick={logout}
-                            >
-                                Log Out
-                            </DropdownItem>
-                            <div className="position-relative">
-                                <i class="bi bi-caret-down-fill position-absolute text-white fs-2" style={{ top: '-12px', left: '4px' }}></i>
-                            </div>
-                        </Dropdown.Menu>
-                    </Dropdown>
+                    <SettingsButton logout={logout} isMac={isMac} />
                 </div>
             </div>
-            <div className={`bg-body p-2 rounded-4 shadow-sm w-md-p-60 d-md-block flex-md-grow-0 flex-grow-1 ${showSideList ? 'd-block' : 'd-none'}`}>
-                {renderSideListComponent()}
+            <div className={`bg-body rounded-4 shadow-sm w-xl-30 w-md-p-60 d-md-block flex-md-grow-0 flex-grow-1 ${showSideList ? 'd-block' : 'd-none'}`}>
+                {sideListsConfig[sideList].component}
             </div>
             <div className={`bg-body p-2 rounded-4 shadow-sm flex-grow-1 d-md-block ${showSideList ? 'd-none' : 'd-block'}`}>
-                <div>{messages || "No chat selected"}</div>
+                {mainConfig[main]}
             </div>
         </div>
     );
 };
-
-//#endregion
 
 const Home = () => {
     const auth = useAuth();
