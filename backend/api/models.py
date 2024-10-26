@@ -1,8 +1,7 @@
 from typing import Any
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.core.exceptions import ValidationError
-from django.core.validators import MinLengthValidator, MaxLengthValidator
+from django.core.validators import MinLengthValidator
 
 class User(AbstractUser):
     class Meta: 
