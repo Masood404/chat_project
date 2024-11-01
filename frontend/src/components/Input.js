@@ -7,12 +7,11 @@ const variantClassMap = {
     "none": "border-0 shadow-none bg-transparent"
 };
 
-const Input = ({ customVariant = "primary", className = "", containerClass = "mb-3", errors = [], ...props }) => {
+const Input = ({ customVariant = "primary", className = "py-2", containerClass = "mb-3", errors = [], ...props }) => {
     return (
         <div className={containerClass}>
             <FormControl
                 className={classNames(
-                    'py-2',
                     variantClassMap[customVariant],
                     className
                 )}
