@@ -143,19 +143,24 @@ const PrivateHome = ({ auth }) => {
 
     useEffect(() => {
         // Load the chats for the current user. The "current user" filter is done by the api.
-        if (accessToken) {
+        if (accessToken && user?.id) {
             axiosInstance('/chats/')
-                .then(({ data }) => {
-                    if (!data.results) throw new UnexpectedResponseData(data);
+                .then(response => {
+                    if (!response?.data?.results) throw new UnexpectedResponseData(response.data);
+
+                    for (let chat of response.data.results) {
+                        // Modify the chat name
+                        chat.name = generateUsersString(chat.users, user.id);
+                    }
                         
-                    setChats(data.results);
+                    setChats(response.data.results);
                 })
                 .catch(error => {
                     if (error instanceof UnexpectedResponseData) console.error(error.message);
                     else throw error;
                 });
         }
-    }, [accessToken]);
+    }, [accessToken, user]);
 
     useEffect(() => {
         setMessages(chats.length > 0 ? chats[chatIndex].admin.full_name : 'No chats found');

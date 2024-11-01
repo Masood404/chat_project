@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-/* Difference between onSubmit and success is that onSubmit will use whatever thrown error to render field errors or invalidity, 
+/* Difference between onSubmit and success is that onSubmit's errors will be used to render field errors or invalidity, 
 whereas onSuccess just runs after submit */
 const useForm = (initial, onSubmit, onSuccess) => {
     const [formData, setFormData] = useState(initial);
