@@ -12,7 +12,7 @@ const SettingsButton = ({ logout, isMac }) => {
                 variant="transparent"
                 className="dropdown-icon-none p-1 rounded-circle" 
             >
-                <Pfp className="fs-4 h-p-7 w-p-7" />
+                <Pfp size="sm" />
             </Dropdown.Toggle>
             <Dropdown.Menu className="border-0 shadow mb-3 py-2 px-1 w-p-65 rounded-3">
                 <DropdownItem 
