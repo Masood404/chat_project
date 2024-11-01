@@ -9,7 +9,7 @@ $dropdown-link-active-color: $body-color;
 $dropdown-link-active-bg: $gray-200;
 
 $custom-colors: (
-  "violet": #a033ff,
+  "violet": #aa00ff,
   "pink": #ff5c87,
   "lavender-mist": #fafaff,
 );
@@ -17,6 +17,7 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
 
 $custom-font-sizes: (
   0: 85px,
+  7: 13px,
   c1: 70px,
 );
 
