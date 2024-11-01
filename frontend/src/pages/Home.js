@@ -1,5 +1,6 @@
 import axiosInstance from "../axiosInstance";
 import { UnexpectedResponseData } from "../errors";
+import { generateUsersString } from "../utils";
 
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -16,6 +17,8 @@ import MicrosoftStore from "../images/microsoft-store.png";
 import Chats from "../components/side-lists/Chats";
 import ChatRequests from "../containers/side-lists/ChatRequests";
 import Archive from "../containers/side-lists/Archive";
+import Messages from "../containers/Messages";
+
 import WithNavbar from "../routing/WithNavbar";
 import Input from "../components/Input";
 import Button from "../components/Button";
@@ -152,7 +155,7 @@ const PrivateHome = ({ auth }) => {
                         // Modify the chat name
                         chat.name = generateUsersString(chat.users, user.id);
                     }
-                        
+
                     setChats(response.data.results);
                 })
                 .catch(error => {
@@ -175,7 +178,7 @@ const PrivateHome = ({ auth }) => {
     const handleChatChange = newChatIndex => () => {
         setChatIndex(newChatIndex);
         setShowSideList(false);
-        show('messages')
+        show('messages');
     };  
     const handleComposeClick = () => { show('compose') };
 
@@ -192,9 +195,7 @@ const PrivateHome = ({ auth }) => {
     };
 
     const mainConfig = {
-        messages: (
-            <div>{messages ?? 'No chats found'}</div>
-        ),
+        messages: <Messages currentChat={chats[chatIndex]} messages={messages} />,
         compose: (
             <div className="d-flex align-items-center pb-2 px-2 border-bottom">
                 <div>To: </div>
@@ -224,7 +225,7 @@ const PrivateHome = ({ auth }) => {
             <div className={`bg-body rounded-4 shadow-sm w-xl-30 w-md-p-60 d-md-block flex-md-grow-0 flex-grow-1 ${showSideList ? 'd-block' : 'd-none'}`}>
                 {sideListsConfig[sideList].component}
             </div>
-            <div className={`bg-body p-2 rounded-4 shadow-sm flex-grow-1 d-md-block ${showSideList ? 'd-none' : 'd-block'}`}>
+            <div className={`bg-body rounded-4 shadow-sm flex-grow-1 d-md-block ${showSideList ? 'd-none' : 'd-block'}`}>
                 {mainConfig[main]}
             </div>
         </div>
