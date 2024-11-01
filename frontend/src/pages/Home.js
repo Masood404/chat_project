@@ -15,8 +15,8 @@ import AppStore from "../images/app-store.svg";
 import MicrosoftStore from "../images/microsoft-store.png";
 
 import Chats from "../components/side-lists/Chats";
-import ChatRequests from "../containers/side-lists/ChatRequests";
-import Archive from "../containers/side-lists/Archive";
+import ChatRequests from "../components/side-lists/ChatRequests";
+import Archive from "../components/side-lists/Archive";
 import Messages from "../containers/Messages";
 
 import WithNavbar from "../routing/WithNavbar";
@@ -132,36 +132,40 @@ const PrivateHome = ({ auth }) => {
 
     const [main, show] = useState('messages');
 
+    const fetchChats = async () => {
+        try {
+            const response = await axiosInstance('/chats/');
+
+            if (!response?.data?.results) throw new UnexpectedResponseData(response.data ?? response);
+
+            for (let chat of response.data.results) {
+                // Modify the chat name
+                chat.name = generateUsersString(chat.users, user.id);
+            }
+
+            setChats(response.data.results);
+        } catch (error) {
+            if (error instanceof UnexpectedResponseData) console.error(error.message);
+            else throw error;
+        }
+    };
+    
     // Update navigation on sideList change
     useEffect(() => {
         navigate(`/home/${sideList}`);
     }, [sideList, navigate]);
-
+    
     // Set sideList based on URL parameter
     useEffect(() => {
         if (sideListParam && sideListsConfig[sideListParam]) {
             setSideList(sideListParam);
         }
     }, [sideListParam]);
-
+    
     useEffect(() => {
-        // Load the chats for the current user. The "current user" filter is done by the api.
+        // Make sure the current user id is fully set
         if (accessToken && user?.id) {
-            axiosInstance('/chats/')
-                .then(response => {
-                    if (!response?.data?.results) throw new UnexpectedResponseData(response.data);
-
-                    for (let chat of response.data.results) {
-                        // Modify the chat name
-                        chat.name = generateUsersString(chat.users, user.id);
-                    }
-
-                    setChats(response.data.results);
-                })
-                .catch(error => {
-                    if (error instanceof UnexpectedResponseData) console.error(error.message);
-                    else throw error;
-                });
+            fetchChats();
         }
     }, [accessToken, user]);
 
