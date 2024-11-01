@@ -54,6 +54,8 @@ const AuthProvider = ({ children }) => {
             if (!data.access) throw new UnexpectedResponseData(data);
 
             setAccessToken(data.access);
+            
+            return data.access;
 
         } catch (error) {
             if (error instanceof UnexpectedResponseData) console.error(error.message);
@@ -117,9 +119,33 @@ const AuthProvider = ({ children }) => {
                 },
                 error => Promise.reject(error)
             );
+
+            const responseInterceptor = axiosInstance.interceptors.response.use(
+                response => response,
+                async error => {
+                    const originalRequest = error.config;
+
+                    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+                        // To avoid recursion
+                        originalRequest._retry = true;
+
+                        try {
+                            const newAccessToken = await refreshAccessToken();
+                            
+                            // Update the original request's Authorization header
+                            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+                            // Retry with the updated request
+                            return axiosInstance(originalRequest);
+
+                        } catch (refreshError) { return Promise.reject(refreshError); }
+                    }
+                }
+            )
             
             return () => {
                 axiosInstance.interceptors.request.eject(requestInterceptor);
+                axiosInstance.interceptors.response.eject(responseInterceptor);
             };
         }
 
