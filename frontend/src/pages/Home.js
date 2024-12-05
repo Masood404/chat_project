@@ -149,6 +149,52 @@ const PrivateHome = ({ auth }) => {
             else throw error;
         }
     };
+
+    const handleSideListChange = (key) => {
+        setSideList(key);
+        setShowSideList(true);
+        show('messages');
+    };
+
+    const handleChatChange = newChatIndex => () => {
+        setChatIndex(newChatIndex);
+        setShowSideList(false);
+        show('messages');
+    };  
+    const handleComposeClick = () => { show('compose') };
+
+    const mainConfig = {
+        messages: <Messages currentChat={chats[chatIndex]} messages={messages} />,
+        compose: (
+            <div className="d-flex align-items-center pb-2 px-2 border-bottom">
+                <div>To: </div>
+                <Input customVariant="none" containerClass="flex-grow-1" className="w-100" />
+            </div>
+        )
+    };
+
+    const sideListsConfig = {
+        chats: { 
+            icon: <i className="bi bi-chat-fill"></i>, 
+            component: <Chats 
+                selfId={user?.id} 
+                chats={chats} 
+                chatIndex={chatIndex} 
+                handleChatChange={handleChatChange}
+                handleComposeClick={handleComposeClick}
+            />,
+            fetch: fetchChats
+        },
+        chatRequests: { 
+            icon: <i className="bi bi-chat-dots-fill"></i>, 
+            component: <ChatRequests /> 
+        },
+        archive: { 
+            icon: <i className="bi bi-archive-fill"></i>, 
+            component: <Archive /> 
+        }
+    };
+
     
     // Update navigation on sideList change
     useEffect(() => {
@@ -165,48 +211,13 @@ const PrivateHome = ({ auth }) => {
     useEffect(() => {
         // Make sure the current user id is fully set
         if (accessToken && user?.id) {
-            fetchChats();
+            sideListsConfig[sideList].fetch?.();
         }
-    }, [accessToken, user]);
+    }, [accessToken, user, sideList]);
 
     useEffect(() => {
         setMessages(chats.length > 0 ? chats[chatIndex].admin.full_name : 'No chats found');
     }, [chatIndex]);
-
-    const handleSideListChange = (key) => {
-        setSideList(key);
-        setShowSideList(true);
-        show('messages');
-    };
-
-    const handleChatChange = newChatIndex => () => {
-        setChatIndex(newChatIndex);
-        setShowSideList(false);
-        show('messages');
-    };  
-    const handleComposeClick = () => { show('compose') };
-
-    const sideListsConfig = {
-        chats: { icon: <i className="bi bi-chat-fill"></i>, component: <Chats 
-            selfId={user?.id} 
-            chats={chats} 
-            chatIndex={chatIndex} 
-            handleChatChange={handleChatChange}
-            handleComposeClick={handleComposeClick}
-        /> },
-        chatRequests: { icon: <i className="bi bi-chat-dots-fill"></i>, component: <ChatRequests /> },
-        archive: { icon: <i className="bi bi-archive-fill"></i>, component: <Archive /> }
-    };
-
-    const mainConfig = {
-        messages: <Messages currentChat={chats[chatIndex]} messages={messages} />,
-        compose: (
-            <div className="d-flex align-items-center pb-2 px-2 border-bottom">
-                <div>To: </div>
-                <Input customVariant="none" containerClass="flex-grow-1" className="w-100" />
-            </div>
-        )
-    };
 
     return (
         <div className="p-3 d-flex bg-light-subtle gap-3 vh-100">
