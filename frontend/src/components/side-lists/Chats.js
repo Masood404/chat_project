@@ -1,8 +1,9 @@
+import { useEffect } from "react";
+
 import { ChatSideButton } from "../ChatSideButton";
-import ComposeButton from "../ComposeButton";
 import Input from "../Input";
 
-const Chats = ({ chats, currentChatIndex, handleChatChange, handleComposeClick }) => {
+const Chats = ({ chats, currentChatIndex, handleChatChange }) => {
     return (
         <div className="h-100 d-flex flex-column pb-3">
             <div className="px-2 py-2 d-flex flex-column">
