@@ -1,4 +1,4 @@
-import { Button, Form } from "react-bootstrap";
+import { Button, Container, Form } from "react-bootstrap";
 
 import useForm from "../hooks/useForm";
 
@@ -32,7 +32,8 @@ const Messages = ({ currentChat, messages }) => {
     // The transition time for each input icon's size (In seconds)
     let inputIconTransition = inputTransition;
 
-    return (
+    // Check if any chat is being currently selected then display that, if not show a message stating no chat is selected.
+    return currentChat ? (
         <div className="h-100 d-flex flex-column">
             <div className="d-flex align-items-center p-2 border-bottom border-3">
                 <div className="flex-grow-1 d-flex justify-content-start">
@@ -121,6 +122,11 @@ const Messages = ({ currentChat, messages }) => {
                 )}
             </Form>
         </div>
+    ) : (
+        <Container className="h-100 d-flex flex-grow flex-column justify-content-center pb-10 text-center">
+            <h2>No chat is selected</h2>
+            <div>Create a new chat, or select a chat to display it here.</div>
+        </Container>
     )
 };
 
