@@ -136,11 +136,11 @@ const PrivateHome = ({ auth }) => {
         try {
             const response = await axiosInstance('/chats/');
 
-            if (!response?.data?.results) throw new UnexpectedResponseData(response.data ?? response);
+            if (!response?.data?.results) throw new UnexpectedResponseData(response?.data ?? response);
 
             for (let chat of response.data.results) {
                 // Modify the chat name
-                chat.name = generateUsersString(chat.users, user.id);
+                if (!chat.name) chat.name = generateUsersString(chat.users, user.id);
             }
 
             setChats(response.data.results);
