@@ -17,6 +17,7 @@ import MicrosoftStore from "../images/microsoft-store.png";
 import Chats from "../components/side-lists/Chats";
 import ChatRequests from "../components/side-lists/ChatRequests";
 import Archive from "../components/side-lists/Archive";
+import Empty from "../containers/Empty";
 import Messages from "../containers/Messages";
 
 import WithNavbar from "../routing/WithNavbar";
@@ -130,7 +131,7 @@ const PrivateHome = ({ auth }) => {
     const [showSideList, setShowSideList] = useState(false);
     const [sideList, setSideList] = useState(sideListParam || 'chats');
 
-    const [main, show] = useState('messages');
+    const [main, show] = useState('empty');
 
     const fetchChats = async () => {
         try {
@@ -164,6 +165,7 @@ const PrivateHome = ({ auth }) => {
     const handleComposeClick = () => { show('compose') };
 
     const mainConfig = {
+empty: <Empty />,
         messages: <Messages currentChat={chats[chatIndex]} messages={messages} />,
         compose: (
             <div className="d-flex align-items-center pb-2 px-2 border-bottom">
