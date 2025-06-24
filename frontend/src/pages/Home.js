@@ -216,8 +216,10 @@ const PrivateHome = ({ auth }) => {
     }, [accessToken, user, sideList]);
 
     useEffect(() => {
-        setMessages(chats.length > 0 ? chats[chatIndex].admin.full_name : 'No chats found');
-    }, [chatIndex]);
+        if (sideList == 'chats' && chats && main !== 'messages') {
+            show('messages');
+}
+    }, [chats, sideList, main]);
 
     return (
         <div className="p-3 d-flex bg-light-subtle gap-3 vh-100">
