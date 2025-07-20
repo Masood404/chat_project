@@ -3,7 +3,7 @@ import { UnexpectedResponseData } from "../errors";
 
 import { useEffect, useState } from "react";
 
-const useSearch = (apiEndpoint = '', delay = 300, queryKey = 'q') => {
+const useSearch = (apiEndpoint, delay = 300, queryKey = 'q') => {
     const [query, setQuery] = useState('');
     // Debounced query is the actual query getting sent to the api with a delayed effect applied.
     const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -17,7 +17,11 @@ const useSearch = (apiEndpoint = '', delay = 300, queryKey = 'q') => {
             // Start the loading state
             setLoading(true);
 
-            const response = await axiosInstance(apiEndpoint + `?${queryKey}=${encodeURIComponent(debouncedQuery)}`);
+            const response = await axiosInstance({
+                method: 'GET',
+                url: apiEndpoint,
+                params: { [queryKey]: debouncedQuery }
+            });
 
             if (!response?.data?.results) throw new UnexpectedResponseData(response?.data ?? response);
 
